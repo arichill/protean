@@ -73,17 +73,26 @@ class Room(ObjectParent, DefaultRoom):
 
         location = _INFLECT.a(self.key)
 
+        # Remove all the old items spawned, keep the MUD 'tidy' for now.
         for old_item in self.contents_get(content_type="object"):
             if old_item.home == self or self.db.ephemera:
+                # TODO: remove check for home once depreciated.
                 self.msg_contents(f"Removing {old_item.key}")
                 old_item.delete()
 
+        # Starting the list with the items already in the room
         items = [_INFLECT.an(i) for i in self.contents_get(content_type="object")]
 
         prompt = make_prompt(f"A list of items found in {location}{sep}{sep.join(items)}")
         # self.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
+
+        # Sometimes the LLM keeps going after the list.
+        # I can set a stop sequence but for now, I find them interesting.
         new_items, *dream = generate_text(prompt).split("\n\n", 1)
 
+        # For now, only using some of the items generated.
+        # Randomizing so that we can get the weirder ones at the bottom of the list
+        # have a chance of getting in.
         new_item_list = new_items.split(sep)
         shuffle(new_item_list)
 
