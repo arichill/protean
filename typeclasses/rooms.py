@@ -28,7 +28,7 @@ class Room(ObjectParent, DefaultRoom):
 
     def at_object_creation(self):
         self.db.preposition = "at"
-        self.db.article = "a" # We don't need this anymore
+        self.db.article = "a"  # We don't need this anymore
         # self.db.inside = False
 
     def describe(self):
@@ -81,7 +81,7 @@ class Room(ObjectParent, DefaultRoom):
                 old_item.delete()
 
         # Starting the list with the items already in the room
-        items = [_INFLECT.an(i) for i in self.contents_get(content_type="object")]
+        items = [_INFLECT.an(i.key) for i in self.contents_get(content_type="object")]
 
         prompt = make_prompt(f"A list of items found in {location}{sep}{sep.join(items)}")
         # self.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
