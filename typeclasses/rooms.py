@@ -82,7 +82,7 @@ class Room(ObjectParent, DefaultRoom):
         # Starting the list with the items already in the room
         items = [_INFLECT.an(i.key) for i in self.contents_get(content_type="object")]
 
-        prompt = make_prompt(f"A list of items found in {location}{sep}{sep.join(items)}")
+        prompt = make_prompt(f"A list of items found in {location}{sep}{sep.join(items)}\n")
         # self.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
 
         # Sometimes the LLM keeps going after the list.
@@ -114,6 +114,7 @@ class Room(ObjectParent, DefaultRoom):
                 key=item_name,
                 location=self,
                 home=self,
+                locks="get:false()",  # Making spawned items not gettable by default
                 attributes=[("ephemera", True)]
             )
             items_spawned += 1
