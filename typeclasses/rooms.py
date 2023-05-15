@@ -115,8 +115,7 @@ class Room(ObjectParent, DefaultRoom):
                 key=item_name,
                 location=self,
                 home=self,
-                attributes=[("article", article.lower()),
-                            ("ephemera", True)]
+                attributes=[("ephemera", True)]
             )
             items_spawned += 1
 
