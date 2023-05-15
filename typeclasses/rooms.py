@@ -43,7 +43,7 @@ class Room(ObjectParent, DefaultRoom):
                  for e in self.exits]
         # addl_info.append(("Exits", "; ".join(exits)))
 
-        items = [_INFLECT.an(i) for i in self.contents_get(content_type="scenery")]
+        items = [_INFLECT.an(i.key) for i in self.contents_get(content_type="scenery")]
         # addl_info.append(("Description", ""))
 
         # prompt = make_prompt(
