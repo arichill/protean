@@ -44,6 +44,7 @@ def generate_text(prompt, max_tokens=150, model='text-curie-001'):
 
 
 def chat_complete(messages):
+    """Simple wrapper for the Chat Completion endpoint. Returns message text of the top choice."""
     print(f"Messages:\n{messages}")
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -65,8 +66,8 @@ def basic_chat_start(additional_text=""):
 class Messages:
     """Manager of the array that the ChatCompletion uses.
     :return list of dicts {"role": "system" "user" or "assistant" :, "content": str}"""
-    def __init__(self):
-        self.list = basic_chat_start()
+    def __init__(self, additional_text=""):
+        self.list = basic_chat_start(additional_text)
 
     def __call__(self, *args, **kwargs):
         return self.list
