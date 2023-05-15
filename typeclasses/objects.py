@@ -234,7 +234,7 @@ class Scenery(Object):
 
     def at_object_creation(self):
         super().at_object_creation()
-        self.locks.add("get: perm(Builder)")
+        self.locks.add("get: false()")
 
         self.write_get_err_msg()
 
