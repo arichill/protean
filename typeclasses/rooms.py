@@ -44,6 +44,9 @@ class Room(ObjectParent, DefaultRoom):
         # addl_info.append(("Exits", "; ".join(exits)))
 
         items = [_INFLECT.an(i.key) for i in self.contents_get(content_type="scenery")]
+        for i in items:  # While we're here let's get new descriptions for the scenery.
+            assert isinstance(i, ObjectParent)
+            i.describe()
         # addl_info.append(("Description", ""))
 
         # prompt = make_prompt(
