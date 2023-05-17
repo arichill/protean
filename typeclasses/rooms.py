@@ -62,7 +62,7 @@ class Room(ObjectParent, DefaultRoom):
         chat_log = Messages()
         chat_log.user(prompt)
 
-        new_text = chat_complete(messages=chat_log())
+        new_text = chat_complete(messages=chat_log())[0]["message"]
 
         if new_text:
             self.db.desc = new_text["content"]

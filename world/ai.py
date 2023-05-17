@@ -44,7 +44,7 @@ def generate_text(prompt, max_tokens=150, model='text-curie-001'):
 
 
 def chat_complete(messages):
-    """Simple wrapper for the Chat Completion endpoint. Returns message text of the top choice."""
+    """Simple wrapper for the Chat Completion endpoint. Returns list of choices."""
     print(f"Messages:\n{messages}")
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -55,7 +55,7 @@ def chat_complete(messages):
     print(f"Completion:\n{completion}")
 
     if completion and "choices" in completion:
-        return completion["choices"][0]["message"]
+        return completion["choices"]
     return ""
 
 
