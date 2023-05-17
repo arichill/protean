@@ -56,7 +56,7 @@ def chat_complete(messages):
 
     if completion and "choices" in completion:
         return completion["choices"]
-    return ""
+    return []
 
 
 def basic_chat_start(additional_text=""):
@@ -81,3 +81,9 @@ class Messages:
 
     def assistant(self, text):
         self.list.append({"role": "assistant", "content": text})
+
+    def add_message(self, message_dict):
+        if "role" in message_dict and "content" in message_dict:
+            self.list.append(message_dict)
+        else:
+            raise TypeError
