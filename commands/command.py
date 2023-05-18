@@ -99,6 +99,27 @@ class SpawnItems(Command):
             target.spawn_items()
         else:
             self.caller.msg("Only rooms can spawn items, at this time")
+
+
+class Clean(Command):
+    """
+    Help clean up the post apocalypse!
+    """
+    key = "clean"
+
+    def func(self):
+        if not self.target:
+            self.caller.msg("Appreciate the enthusiasm! Where would you like to start?")
+            return
+
+        target = self.caller.search(self.target)
+        target_name = target.key
+
+        if target.db.ephemera:
+            target.delete()
+            self.caller.msg(f"Cleaned up {target_name}. Feels good.")
+        else:
+            self.caller.msg(f"{target_name.capitalize()} seems important somehow. Couldn't bear to throw it out.")
 # -------------------------------------------------------------
 #
 # The default commands inherit from

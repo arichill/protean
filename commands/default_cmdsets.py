@@ -16,7 +16,7 @@ own cmdsets by inheriting from them or directly from `evennia.CmdSet`.
 
 from evennia import default_cmds
 from evennia import CmdSet
-from .command import CmdDescribify, TakeAPicture, SpawnItems
+from .command import CmdDescribify, TakeAPicture, SpawnItems, Clean
 
 
 class CharacterCmdSet(default_cmds.CharacterCmdSet):
@@ -43,6 +43,11 @@ class CustomCmdSet(CmdSet):
         self.add(CmdDescribify)
         self.add(TakeAPicture)
         self.add(SpawnItems)
+
+
+class TrashcanCmdSet(CmdSet):
+    def at_cmdset_creation(self):
+        self.add(Clean)
 
 
 class AccountCmdSet(default_cmds.AccountCmdSet):
