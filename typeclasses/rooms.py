@@ -6,7 +6,7 @@ Rooms are simple containers that has no location of their own.
 """
 from evennia.objects.objects import DefaultRoom, DefaultObject
 from evennia import create_object
-from .objects import ObjectParent, make_prompt, generate_text, zip_up_to_str
+from .objects import ObjectParent, Scenery, make_prompt, generate_text, zip_up_to_str
 from world.ai import Messages, chat_complete
 
 import inflect
@@ -49,8 +49,10 @@ class Room(ObjectParent, DefaultRoom):
         # I found giving all the items to chatgpt3.5 to produce really tedious descriptions.
         # Making scenery special allows for some control
         items = [_INFLECT.an(i.key) for i in self.contents_get(content_type="scenery")]
-        for i in items:  # While we're here let's get new descriptions for the scenery.
-            assert isinstance(i, ObjectParent)
+
+        # While we're here let's get new descriptions for the scenery items.
+        for i in self.contents_get(content_type="scenery"):
+            assert isinstance(i, Scenery)
             i.describe()
         # addl_info.append(("Description", ""))
 
@@ -75,7 +77,6 @@ class Room(ObjectParent, DefaultRoom):
             self.save()
 
     def spawn_items(self):
-        sep = "\n-"
         num_of_items = randint(2, 6)
         items_spawned = 0
 
@@ -90,11 +91,12 @@ class Room(ObjectParent, DefaultRoom):
         # Starting the list with the items already in the room
         items = [_INFLECT.an(i.key) for i in self.contents_get(content_type="object")]
 
+        sep = "\n-"
         prompt = make_prompt(f"A list of items found in {location}{sep}{sep.join(items)}\n")
         # self.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
 
         # Sometimes the LLM keeps going after the list.
-        # I can set a stop sequence but for now, I find them interesting.
+        # I can set a stop sequence, but for now I find them interesting.
         new_items, *dream = generate_text(prompt).split("\n\n", 1)
 
         # For now, only using some of the items generated.
@@ -119,7 +121,7 @@ class Room(ObjectParent, DefaultRoom):
             else:
                 item_name = " ".join(item_words)
 
-            create_object(
+            obj = create_object(
                 typeclass="typeclasses.objects.Object",
                 key=item_name,
                 location=self,
@@ -127,6 +129,7 @@ class Room(ObjectParent, DefaultRoom):
                 locks="get:false()",  # Making spawned items not gettable by default
                 attributes=[("ephemera", True)]
             )
+            obj.write_get_err_msg()  # Since they cannot be gotten, might as well write the message now
             items_spawned += 1
 
         self.msg_contents("|G{}|n".format("".join(dream)))
