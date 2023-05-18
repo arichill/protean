@@ -34,6 +34,9 @@ class Room(ObjectParent, DefaultRoom):
     def describe(self):
         addl_info = []
 
+        # This is sort of a placeholder. I think different types of rooms will have different
+        # "prepositions" or I guess it's just 'what is before the self.name in the prompt'
+        # Ex: "Trapped in"
         prep = self.db.preposition or "at"
 
         location = " ".join([prep, _INFLECT.a(self.key), self.db.addl_location_prompt or ""]).strip()
@@ -43,6 +46,8 @@ class Room(ObjectParent, DefaultRoom):
                  for e in self.exits]
         # addl_info.append(("Exits", "; ".join(exits)))
 
+        # I found giving all the items to chatgpt3.5 to produce really tedious descriptions.
+        # Making scenery special allows for some control
         items = [_INFLECT.an(i.key) for i in self.contents_get(content_type="scenery")]
         for i in items:  # While we're here let's get new descriptions for the scenery.
             assert isinstance(i, ObjectParent)
@@ -105,6 +110,8 @@ class Room(ObjectParent, DefaultRoom):
             if not item:
                 continue
 
+            # Simple parsing for now, but theoretically this is where if it gets more complex
+            # it go at this point in the logic flow
             article, *item_words = item.split(maxsplit=1)
             if not item_words:
                 item_name = article
