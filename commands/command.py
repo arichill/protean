@@ -8,10 +8,7 @@ Commands describe the input the account can do to the game.
 from evennia.commands.command import Command as BaseCommand
 from evennia import create_object
 
-try:
-    from world.ai import make_prompt, generate_text
-except ImportError:
-    from ..world.ai import make_prompt, generate_text
+from world.ai import make_prompt, generate_text
 
 
 class Command(BaseCommand):
