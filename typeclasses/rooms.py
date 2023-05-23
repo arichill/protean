@@ -28,8 +28,6 @@ class Room(ObjectParent, DefaultRoom):
 
     def at_object_creation(self):
         self.db.preposition = "at"
-        self.db.article = "a"  # We don't need this anymore
-        # self.db.inside = False
 
     def describe(self):
         addl_info = []
@@ -39,7 +37,8 @@ class Room(ObjectParent, DefaultRoom):
         # Ex: "Trapped in"
         prep = self.db.preposition or "at"
 
-        location = " ".join([prep, _INFLECT.a(self.key), self.db.addl_location_prompt or ""]).strip()
+        location = " ".join(
+            [prep, _INFLECT.a(self.key), self.db.addl_location_prompt or ""]).strip()
         # addl_info.append(("Name of location", location))
 
         exits = ["{} to {}\n".format(e.key, _INFLECT.an(e.destination.key))
@@ -66,6 +65,7 @@ class Room(ObjectParent, DefaultRoom):
         # self.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
         # new_text = generate_text(prompt)
 
+        # At this time we're generating the Message log on every describe.
         chat_log = Messages()
         chat_log.user(prompt)
 
@@ -77,6 +77,7 @@ class Room(ObjectParent, DefaultRoom):
             self.save()
 
     def spawn_items(self):
+        # It would be interesting if the # of items generated is a property of the object
         num_of_items = randint(2, 6)
         items_spawned = 0
 
@@ -105,6 +106,11 @@ class Room(ObjectParent, DefaultRoom):
         new_item_list = new_items.split(sep)
         shuffle(new_item_list)
 
+        # Simple parser for now, but this is holding a place for when I get more advanced parsing
+        # Although really this should be in the ai.py file if it gets more complex
+        def parse(item_str):
+            return item_str.lstrip("a ").lstrip("an ").strip().strip("-")
+
         for item in new_item_list:
             if items_spawned >= num_of_items:
                 break
@@ -112,14 +118,7 @@ class Room(ObjectParent, DefaultRoom):
             if not item:
                 continue
 
-            # Simple parsing for now, but theoretically this is where if it gets more complex
-            # it go at this point in the logic flow
-            article, *item_words = item.split(maxsplit=1)
-            if not item_words:
-                item_name = article
-                article = ""
-            else:
-                item_name = " ".join(item_words)
+            item_name = parse(item)
 
             obj = create_object(
                 typeclass="typeclasses.objects.Object",
