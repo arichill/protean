@@ -34,7 +34,7 @@ class Command(BaseCommand):
 
     def parse(self):
         self.args = self.args.strip()
-        self.target = self.args.split(" ")[0]
+        self.target = self.args
 
 
 def zip_up_to_str(list_of_tuples):
@@ -89,11 +89,7 @@ class SpawnItems(Command):
     key = "item spawn"
 
     def func(self):
-        target = None
-        if not self.target:
-            target = self.caller.search(self.target)
-        if not target:
-            target = self.caller.location
+        target = self.caller.location
 
         if target.is_typeclass('typeclasses.rooms.Room'):
             target.spawn_items()
