@@ -7,7 +7,7 @@ Rooms are simple containers that has no location of their own.
 from evennia.objects.objects import DefaultRoom, DefaultObject
 from evennia import create_object
 from .objects import ObjectParent, Scenery, make_prompt, generate_text, zip_up_to_str
-from world.ai import Messages, chat_complete
+from world.ai import Messages, chat_complete, scenic_objects
 
 import inflect
 from random import randint, shuffle
@@ -119,16 +119,20 @@ class Room(ObjectParent, DefaultRoom):
                 continue
 
             item_name = parse(item)
+            typeclass = "typeclasses.objects.Object"
+
+            for s in scenic_objects:
+                if s in item_name:
+                    typeclass = "typeclasses.objects.Scenery"
 
             obj = create_object(
-                typeclass="typeclasses.objects.Object",
+                typeclass=typeclass,
                 key=item_name,
                 location=self,
                 home=self,
                 locks="get:false()",  # Making spawned items not gettable by default
                 tags=["ephemera"]
             )
-            obj.write_get_err_msg()  # Since they cannot be gotten, might as well write the message now
             items_spawned += 1
 
         self.msg_contents("|G{}|n".format("".join(dream)))

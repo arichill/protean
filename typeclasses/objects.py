@@ -201,6 +201,10 @@ class Object(ObjectParent, DefaultObject):
                              f"Write a short message:\n")
         dropper.msg(generate_text(prompt))
 
+    def at_access(self, result, accessing_obj, access_type, **kwargs):
+        if not result and access_type == "get":
+            self.write_get_err_msg()
+
     def describe(self):
         addl_info = [("Item", self.key),
                      ("Description", "")

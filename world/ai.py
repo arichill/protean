@@ -8,7 +8,7 @@ openai.api_key = settings.OPENAI_KEY
 
 TONE = \
     "Write for a text based game set in a post-apocalyptic overgrown city setting. "\
-    "The city generally has dilapidated, abandoned buildings with plants, " \
+    "The city generally has dilapidated, abandoned buildings with plants " \
     "like trees, vines, ferns, bushes, shrubs, weeds of all types growing all over.  "\
     "Tone should be gritty, but wistful. "\
     "Emphasize the enormous amount of junk left by the old society "\
@@ -22,6 +22,14 @@ pickup_item_prompt = \
     "Item:TRUE or FALSE, can it be picked up?\n" \
     "crowbar: True\n" \
     "window: False\n"
+
+scenic_objects = [
+    "window",
+    "car"
+    "building",
+    "pile",
+    "rubble"
+]
 
 
 def make_prompt(additional_text):
