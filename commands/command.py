@@ -115,7 +115,7 @@ class Clean(Command):
         target = self.caller.search(self.target)
         target_name = target.key
 
-        if target.db.ephemera:
+        if target.db.ephemera or target.tags.has("ephemera"):
             target.delete()
             self.caller.msg(f"Cleaned up {target_name}. Feels good.")
         else:
