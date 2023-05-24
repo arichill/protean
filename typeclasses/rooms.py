@@ -85,7 +85,7 @@ class Room(ObjectParent, DefaultRoom):
 
         # Remove all the old items spawned, keep the MUD 'tidy' for now.
         for old_item in self.contents_get(content_type="object"):
-            if old_item.db.ephemera:
+            if old_item.db.ephemera or old_item.tags.has("ephemera"):
                 self.msg_contents(f"Removing {old_item.key}")
                 old_item.delete()
 
@@ -126,7 +126,7 @@ class Room(ObjectParent, DefaultRoom):
                 location=self,
                 home=self,
                 locks="get:false()",  # Making spawned items not gettable by default
-                attributes=[("ephemera", True)]
+                tags=["ephemera"]
             )
             obj.write_get_err_msg()  # Since they cannot be gotten, might as well write the message now
             items_spawned += 1
