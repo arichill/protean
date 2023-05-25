@@ -93,7 +93,7 @@ class Room(ObjectParent, DefaultRoom):
         items = [_INFLECT.an(i.key) for i in self.contents_get(content_type="object")]
 
         sep = "\n-"
-        prompt = make_prompt(f"Provide a list of items found in {location}{sep}{sep.join(items)}\n")
+        prompt = make_prompt(f"Provide a list of items found in {location}{sep}{sep.join(items)}")
         # self.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
 
         # Sometimes the LLM keeps going after the list.
