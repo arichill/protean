@@ -112,8 +112,8 @@ class Room(ObjectParent, DefaultRoom):
             return item_str \
                 .strip() \
                 .strip("-")\
-                .lstrip("a ").lstrip("A ")\
-                .lstrip("an ").lstrip("An ")\
+                .removeprefix("a ").removeprefix("A ")\
+                .removeprefix("an ").removeprefix("An ")\
 
         for item in new_item_list:
             if items_spawned >= num_of_items:
