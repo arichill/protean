@@ -24,13 +24,7 @@ pickup_item_prompt = \
     "window: False\n"
 
 scenic_objects = [
-    "window",
-    "car"
-    "building",
-    "pile",
-    "rubble",
-    "tree",
-    "vine"
+    "window", "car", "building", "pile", "rubble", "tree", "vine", "house"
 ]
 
 
