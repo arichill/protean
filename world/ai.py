@@ -28,7 +28,9 @@ scenic_objects = [
     "car"
     "building",
     "pile",
-    "rubble"
+    "rubble",
+    "tree",
+    "vine"
 ]
 
 

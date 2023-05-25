@@ -121,6 +121,9 @@ class Room(ObjectParent, DefaultRoom):
             item_name = parse(item)
             typeclass = "typeclasses.objects.Object"
 
+            # So for now I'm doing some simple matching, seeing if various names from `scenic_objects`
+            # are present in the item string, for ex "building", "window", "tree"
+            # An interesting idea is using the evennia prototype system to handle all this
             for s in scenic_objects:
                 if s in item_name:
                     typeclass = "typeclasses.objects.Scenery"
@@ -130,7 +133,7 @@ class Room(ObjectParent, DefaultRoom):
                 key=item_name,
                 location=self,
                 home=self,
-                locks="get:false()",  # Making spawned items not gettable by default
+                # locks="get:false()",  # Gonna try to handle this at the typeclass level
                 tags=["ephemera"]
             )
             items_spawned += 1
