@@ -109,7 +109,11 @@ class Room(ObjectParent, DefaultRoom):
         # Simple parser for now, but this is holding a place for when I get more advanced parsing
         # Although really this should be in the ai.py file if it gets more complex
         def parse(item_str):
-            return item_str.lstrip("a ").lstrip("an ").strip().strip("-")
+            return item_str\
+                .lstrip("a ").lstrip("A ")\
+                .lstrip("an ").lstrip("An ")\
+                .strip()\
+                .strip("-")
 
         for item in new_item_list:
             if items_spawned >= num_of_items:
@@ -121,6 +125,9 @@ class Room(ObjectParent, DefaultRoom):
             item_name = parse(item)
             typeclass = "typeclasses.objects.Object"
 
+            # So for now I'm doing some simple matching, seeing if various names from `scenic_objects`
+            # are present in the item string, for ex "building", "window", "tree"
+            # An interesting idea is using the evennia prototype system to handle all this
             for s in scenic_objects:
                 if s in item_name:
                     typeclass = "typeclasses.objects.Scenery"
@@ -130,7 +137,7 @@ class Room(ObjectParent, DefaultRoom):
                 key=item_name,
                 location=self,
                 home=self,
-                locks="get:false()",  # Making spawned items not gettable by default
+                # locks="get:false()",  # Gonna try to handle this at the typeclass level
                 tags=["ephemera"]
             )
             items_spawned += 1
