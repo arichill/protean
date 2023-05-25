@@ -103,17 +103,17 @@ class Room(ObjectParent, DefaultRoom):
         # For now, only using some of the items generated.
         # Randomizing so that we can get the weirder ones at the bottom of the list
         # have a chance of getting in.
-        new_item_list = new_items.split(sep)
+        new_item_list = new_items.split(sep.strip())
         shuffle(new_item_list)
 
         # Simple parser for now, but this is holding a place for when I get more advanced parsing
         # Although really this should be in the ai.py file if it gets more complex
         def parse(item_str):
-            return item_str\
+            return item_str \
+                .strip() \
+                .strip("-")\
                 .lstrip("a ").lstrip("A ")\
                 .lstrip("an ").lstrip("An ")\
-                .strip()\
-                .strip("-")
 
         for item in new_item_list:
             if items_spawned >= num_of_items:
