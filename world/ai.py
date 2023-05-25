@@ -45,7 +45,9 @@ def generate_text(prompt, max_tokens=150, model='text-curie-001'):
         model=model,
         prompt=prompt,
         max_tokens=max_tokens,
-        top_p=.9)
+        top_p=.9,
+        frequency_penalty=.1
+    )
     print(f"Completion:\n{completion}")
 
     if completion and "choices" in completion:
