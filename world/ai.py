@@ -7,7 +7,7 @@ import openai
 openai.api_key = settings.OPENAI_KEY
 
 TONE = \
-    "Write for a text based game set in a post-apocalyptic overgrown city setting. "\
+    "This is a text based game set in a post-apocalyptic overgrown city. "\
     "The city generally has dilapidated, abandoned buildings with plants " \
     "of all types growing all over.  "\
     "Tone should be gritty, but wistful. "\
@@ -23,8 +23,13 @@ pickup_item_prompt = \
     "crowbar: True\n" \
     "window: False\n"
 
+# I'm still pretty sure these *_objects lists should be in prototypes.py
 scenic_objects = [
     "window", "car", "building", "pile", "rubble", "tree", "vine", "house"
+]
+
+container_objects = [
+    "box", "backpack", "crate"
 ]
 
 
