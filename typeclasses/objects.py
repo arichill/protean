@@ -13,7 +13,7 @@ inheritance.
 
 from evennia.objects.objects import DefaultObject
 from world.ai import make_prompt, generate_text, Messages, chat_complete
-from containers import ContribContainer
+from typeclasses.containers import ContribContainer
 
 import inflect
 _INFLECT = inflect.engine()
