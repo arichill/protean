@@ -13,6 +13,7 @@ inheritance.
 
 from evennia.objects.objects import DefaultObject
 from world.ai import make_prompt, generate_text, Messages, chat_complete
+from containers import ContribContainer
 
 import inflect
 _INFLECT = inflect.engine()
@@ -241,6 +242,10 @@ class Scenery(Object):
         self.locks.add("get: false()")
 
         self.write_get_err_msg()
+
+
+class Container(ContribContainer):
+    pass
 
 
 def zip_up_to_str(list_of_tuples):
