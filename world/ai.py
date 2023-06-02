@@ -23,8 +23,13 @@ pickup_item_prompt = \
     "crowbar: True\n" \
     "window: False\n"
 
+# I'm still pretty sure this should be in prototypes.py
 scenic_objects = [
     "window", "car", "building", "pile", "rubble", "tree", "vine", "house"
+]
+
+container_objects = [
+    "box", "backpack", "crate"
 ]
 
 
