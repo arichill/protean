@@ -7,7 +7,7 @@ Rooms are simple containers that has no location of their own.
 from evennia.objects.objects import DefaultRoom, DefaultObject
 from evennia import create_object
 from .objects import ObjectParent, Scenery, make_prompt, generate_text, zip_up_to_str
-from world.ai import Messages, chat_complete, scenic_objects
+from world.ai import Messages, chat_complete, scenic_objects, container_objects
 
 import inflect
 from random import randint, shuffle
@@ -131,6 +131,11 @@ class Room(ObjectParent, DefaultRoom):
             for s in scenic_objects:
                 if s in item_name:
                     typeclass = "typeclasses.objects.Scenery"
+                    break
+
+            for c in container_objects:
+                if c in item_name:
+                    typeclass = "typeclasses.objects.Container"
 
             obj = create_object(
                 typeclass=typeclass,
