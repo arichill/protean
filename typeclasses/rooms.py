@@ -135,7 +135,7 @@ class Room(ObjectParent, DefaultRoom):
 
             for c in container_objects:
                 if c in item_name:
-                    typeclass = "typeclasses.objects.Container"
+                    typeclass = "typeclasses.containers.Container"
                     break
 
             obj = create_object(
