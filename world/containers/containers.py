@@ -125,6 +125,7 @@ class CmdContainerLook(CmdLook):
         caller = self.caller
         # by default, we don't look in anything
         container = None
+        target = None
 
         if not self.args:
             target = caller.location
@@ -137,7 +138,7 @@ class CmdContainerLook(CmdLook):
             if not container:
                 return
 
-        target = caller.search(self.lhs, location=container)
+        target = target or caller.search(self.lhs, location=container)
         if not target:
             return
 

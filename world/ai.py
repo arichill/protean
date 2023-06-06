@@ -7,8 +7,8 @@ import openai
 openai.api_key = settings.OPENAI_KEY
 
 TONE = \
-    "This is a text based game set in a post-apocalyptic overgrown city. "\
-    "The city generally has dilapidated, abandoned buildings with plants " \
+    "This is a text based game in a post-apocalyptic overgrown urban landscape. "\
+    "The city generally has dilapidated, abandoned buildings with various plants " \
     "of all types growing all over.  "\
     "Tone should be gritty, but wistful. "\
     "Emphasize the enormous amount of junk left by the old society "\
@@ -25,11 +25,11 @@ pickup_item_prompt = \
 
 # I'm still pretty sure these *_objects lists should be in prototypes.py
 scenic_objects = [
-    "window", "car", "building", "pile", "rubble", "tree", "vine", "house"
+    "window", "car", "building", "pile", "rubble", "tree", "vine", "house", "plant"
 ]
 
 container_objects = [
-    "box", "backpack", "crate"
+    "box", "backpack", "crate", "bag"
 ]
 
 
@@ -45,7 +45,7 @@ def generate_text(prompt, max_tokens=150, model='text-curie-001'):
         prompt=prompt,
         max_tokens=max_tokens,
         top_p=.9,
-        frequency_penalty=.1
+        frequency_penalty=.2
     )
     print(f"Completion:\n{completion}")
 

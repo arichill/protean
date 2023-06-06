@@ -192,12 +192,14 @@ class Object(ObjectParent, DefaultObject):
         self.db.article = self.db.article or "a"  # Don't need this now that I know what inflect is
 
     def at_get(self, getter, **kwargs):
-        prompt = make_prompt(f"A character picked up {_INFLECT.a(self.name)}.\n"
+        prompt = make_prompt(f"A character got {_INFLECT.a(self.name)}.\n"
                              f"Write a short message:\n")
         getter.msg(generate_text(prompt))
 
     def at_drop(self, dropper, **kwargs):
-        prompt = make_prompt(f"A character dropped a {_INFLECT.a(self.name)}.\n"
+        # Don't think this is going to work as it is, mainly due to containers.
+        # It's possible that working of
+        prompt = make_prompt(f"A character no longer has {_INFLECT.a(self.name)}.\n"
                              f"Write a short message:\n")
         dropper.msg(generate_text(prompt))
 
