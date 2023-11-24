@@ -1,40 +1,27 @@
-# Welcome to Evennia!
+# Protean
 
-This is your game directory, set up to let you start with
-your new game right away. An overview of this directory is found here:
-https://github.com/evennia/evennia/wiki/Directory-Overview#the-game-directory
+Hello, this is my project to tie an LLM and a MUD together and see what happens.  
 
-You can delete this readme file when you've read it and you can
-re-arrange things in this game-directory to suit your own sense of
-organisation (the only exception is the directory structure of the
-`server/` directory, which Evennia expects). If you change the structure
-you must however also edit/add to your settings file to tell Evennia
-where to look for things.
+Built on the Evennia MU* framework: https://www.evennia.com/
 
-Your game's main configuration file is found in
-`server/conf/settings.py` (but you don't need to change it to get
-started). If you just created this directory (which means you'll already
-have a `virtualenv` running if you followed the default instructions),
-`cd` to this directory then initialize a new database using
+## Installation
+Will make this smoother at some point. Best way to install to:
+1. Create a virtualenv. There is a requirements.txt to recreate the virtualenv that I currently use. Download it and use `pip install -r requirements.txt`
+2. Clone this repo
+3. Use `evennia migrate` to create a new db and other set up stuff.  Should only have to do this once.
+4. Either update `\server\conf\settings.py` or create `\server\conf\secret_settings.py` with `OPENAI_KEY = "<your OpenAI key>"`
+5. Use `evennia start` to start up the MUD server.  If you did everything right, you should be able to access your MUD from _localhost_. localhost, port 4000 via telnet, or http://localhost:4001 to play via the Django 
 
-    evennia migrate
+Check out https://www.evennia.com/docs/latest/index.html for more info on the mechanics of running the MUD
 
-To start the server, stand in this directory and run
+## My changes
+Where you want to look and see what I done did
 
-    evennia start
+commands/command.py  
+commands/default_cmdsets.py  
 
-This will start the server, logging output to the console. Make
-sure to create a superuser when asked. By default you can now connect
-to your new game using a MUD client on `localhost`, port `4000`.  You can
-also log into the web client by pointing a browser to
-`http://localhost:4001`.
+typeclasses/exits.py  
+typeclasses/objects.py  
+typeclasses/rooms.py  
 
-# Getting started
-
-From here on you might want to look at one of the beginner tutorials:
-http://github.com/evennia/evennia/wiki/Tutorials.
-
-Evennia's documentation is here:
-https://github.com/evennia/evennia/wiki.
-
-Enjoy!
+world/ai.py
