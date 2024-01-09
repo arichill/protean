@@ -33,4 +33,24 @@ class Character(ObjectParent, DefaultCharacter):
 
     """
 
-    pass
+    def at_post_puppet(self, **kwargs):
+        """
+        Copied structure from Evennia lib.
+        :param kwargs:
+        :return:
+        """
+        self.msg("""
+|cWake up {name}|n.' 
+        
+Huh, what was that? You rub the sand out of your eyes, leaving behind a blurry mess.
+What happened? Oh yeah, the world stopped, right? Hard to know what's real these days. Maybe this is all of bad dream...
+""".format(name=self.key))
+        self.msg((self.at_look(self.location), {"type": "look"}), options=None)
+
+        def message(obj, from_obj):
+            obj.msg(
+                "{name} has entered the game.".format(name=self.get_display_name(obj)),
+                from_obj=from_obj,
+            )
+
+        self.location.for_contents(message, exclude=[self], from_obj=self)

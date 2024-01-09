@@ -37,7 +37,7 @@ def make_prompt(additional_text):
     return TONE + additional_text  # + "\nDescription:\n"
 
 
-def generate_text(prompt, max_tokens=150, model='text-curie-001'):
+def generate_text(prompt, max_tokens=150, model='gpt-3.5-turbo'):
     """Returns the text of a completion prompt"""
     print(f"Prompt:\n{prompt}")
     completion = openai.Completion.create(
