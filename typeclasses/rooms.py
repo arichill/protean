@@ -69,10 +69,12 @@ class Room(ObjectParent, DefaultRoom):
         chat_log = Messages()
         chat_log.user(prompt)
 
-        new_text = chat_complete(messages=chat_log())[0]["message"]
+        # While migrating this, it occurs to me that perhaps 'openai' stuff is to exposed here
+        # This code should be agnostic as to how/which model generated the text.
+        new_text = chat_complete(messages=chat_log())[0].message
 
         if new_text:
-            self.db.desc = new_text["content"]
+            self.db.desc = new_text.content
             self.db.used_prompt = prompt
             self.save()
 

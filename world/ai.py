@@ -6,6 +6,8 @@ from evennia import settings
 import openai
 openai.api_key = settings.OPENAI_KEY
 
+client = openai.OpenAI()
+
 TONE = \
     "This is a text based game in a post-apocalyptic overgrown urban landscape. "\
     "The city generally has dilapidated, abandoned buildings with various plants " \
@@ -37,10 +39,10 @@ def make_prompt(additional_text):
     return TONE + additional_text  # + "\nDescription:\n"
 
 
-def generate_text(prompt, max_tokens=150, model='gpt-3.5-turbo'):
+def generate_text(prompt, max_tokens=150, model='gpt-3.5-turbo-instruct'):
     """Returns the text of a completion prompt"""
     print(f"Prompt:\n{prompt}")
-    completion = openai.Completion.create(
+    completion = client.completions.create(
         model=model,
         prompt=prompt,
         max_tokens=max_tokens,
@@ -49,15 +51,13 @@ def generate_text(prompt, max_tokens=150, model='gpt-3.5-turbo'):
     )
     print(f"Completion:\n{completion}")
 
-    if completion and "choices" in completion:
-        return completion["choices"][0]["text"]
-    return ""
+    return completion.choices[0].text
 
 
 def chat_complete(messages):
     """Simple wrapper for the Chat Completion endpoint. Returns list of choices."""
     print(f"Messages:\n{messages}")
-    completion = openai.ChatCompletion.create(
+    completion = openai.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=messages,
         max_tokens=175,
@@ -65,8 +65,8 @@ def chat_complete(messages):
     )
     print(f"Completion:\n{completion}")
 
-    if completion and "choices" in completion:
-        return completion["choices"]
+    if completion:
+        return completion.choices
     return []
 
 
