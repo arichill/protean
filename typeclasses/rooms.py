@@ -69,7 +69,7 @@ class Room(ObjectParent, DefaultRoom):
         chat_log = Messages()
         chat_log.user(prompt)
 
-        # While migrating this, it occurs to me that perhaps 'openai' stuff is to exposed here
+        # While migrating this, it occurs to me that perhaps 'openai' stuff is too exposed here
         # This code should be agnostic as to how/which model generated the text.
         new_text = chat_complete(messages=chat_log())[0].message
 
@@ -94,8 +94,12 @@ class Room(ObjectParent, DefaultRoom):
         # Starting the list with the items already in the room
         items = [_INFLECT.an(i.key) for i in self.contents_get(content_type="object")]
 
+        # Make sure the prompt ends with the list item delimiter, so that the LLM starts with
+        # a new item, rather than appending to the last item in the list
         sep = "\n-"
-        prompt = make_prompt(f"A list of items in {location}{sep}{sep.join(items)}")
+        items.append(sep)
+
+        prompt = make_prompt(f"A simple list of items in {location}{sep.join(items)}")
         # self.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
 
         # Sometimes the LLM keeps going after the list.
@@ -112,7 +116,7 @@ class Room(ObjectParent, DefaultRoom):
         # Although really this should be in the ai.py file if it gets more complex
         def parse(item_str):
             return item_str \
-                .strip() \
+                .strip()\
                 .strip("-")\
                 .removeprefix("a ").removeprefix("A ")\
                 .removeprefix("an ").removeprefix("An ")\
