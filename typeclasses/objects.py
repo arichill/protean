@@ -192,15 +192,23 @@ class Object(ObjectParent, DefaultObject):
         self.db.article = self.db.article or "a"  # Don't need this now that I know what inflect is
 
     def at_get(self, getter, **kwargs):
-        prompt = make_prompt(f"A character got {_INFLECT.a(self.name)}.\n"
+        if self.location.is_typeclass('typeclasses.containers.Container'):
+            prompt_text = f"A character retrieved {_INFLECT.a(self.name)} from {_INFLECT.a(self.location.name)}.\n"
+        else:
+            prompt_text = f"A character got {_INFLECT.a(self.name)}.\n"
+
+        prompt = make_prompt(prompt_text +
                              f"Write a short message:\n")
         getter.msg(generate_text(prompt))
 
     def at_drop(self, dropper, **kwargs):
-        # Don't think this is going to work as it is, mainly due to containers.
-        # It's possible that working of
-        prompt = make_prompt(f"A character no longer has {_INFLECT.a(self.name)}.\n"
-                             f"Write a short message:\n")
+        if self.location.is_typeclass('typeclasses.containers.Container'):
+            prompt = make_prompt(f"A character put {_INFLECT.a(self.name)} in {_INFLECT.a(self.location.name)}.\n"
+                                 f"Write a short message:\n")
+        else:
+            prompt = make_prompt(f"A character no longer has {_INFLECT.a(self.name)}.\n"
+                                 f"Write a short message:\n")
+
         dropper.msg(generate_text(prompt))
 
     def at_access(self, result, accessing_obj, access_type, **kwargs):
@@ -209,7 +217,10 @@ class Object(ObjectParent, DefaultObject):
 
     def describe(self):
         addl_info = [("Item", self.key),
-                     ("Description", "")
+                     ("Location",
+                      f"in {self.location}'s inventory" if self.location.is_typeclass('typeclasses.characters.Character')
+                      else self.location),
+                     ("Short description", "")
                      ]
         prompt = make_prompt(zip_up_to_str(addl_info))
         # self.location.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
