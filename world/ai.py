@@ -8,6 +8,7 @@ from openai import OpenAI, OpenAIError
 
 if not openai.api_key:
     try:
+        import os
         openai.api_key = os.environ.get("OPENAI_API_KEY") or settings.OPENAI_KEY
     except AttributeError:
         raise OpenAIError(
