@@ -8,7 +8,7 @@ from openai import OpenAI, OpenAIError
 
 if not openai.api_key:
     try:
-        openai.api_key = settings.OPENAI_KEY
+        openai.api_key = os.environ.get("OPENAI_API_KEY") or settings.OPENAI_KEY
     except AttributeError:
         raise OpenAIError(
             "Put your OpenAI api key in either the environmental variable OPENAI_API_KEY or in the Evennia settings as "
