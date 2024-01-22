@@ -4,9 +4,12 @@ Where I'm putting functions for talking to LLMs.  OpenAI stuff basically
 
 from evennia import settings
 import openai
-openai.api_key = settings.OPENAI_KEY
+from openai import OpenAI, OpenAIError
 
-client = openai.OpenAI()
+if not openai.api_key:
+    openai.api_key = settings.OPENAI_KEY
+
+client = OpenAI()
 
 TONE = \
     "This is a text based game in a post-apocalyptic overgrown urban landscape. "\

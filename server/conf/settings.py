@@ -34,7 +34,10 @@ from evennia.settings_default import *
 # This is the name of your game. Make it catchy!
 SERVERNAME = "protean"
 
-OPENAI_KEY = "sk-..."
+# OpenAI will by default check for the api key in the environmental variable OPENAI_API_KEY
+# ai.py however will also check Evennia settings if that is not set
+# Recommended that you set this in the 'secret_settings.py' file!
+# OPENAI_KEY = "sk-..."
 
 ######################################################################
 # Settings given in secret_settings.py override those in this file.
