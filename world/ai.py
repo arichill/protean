@@ -11,7 +11,7 @@ if not openai.api_key:
         openai.api_key = settings.OPENAI_KEY
     except AttributeError:
         raise OpenAIError(
-            "Put your OpenAI api key in either the environmental variable OPENAI_API_KEY or in the Evennia settings as"
+            "Put your OpenAI api key in either the environmental variable OPENAI_API_KEY or in the Evennia settings as "
             "OPENAI_KEY.  See /server/conf/settings.py for details")
 
 client = OpenAI()
