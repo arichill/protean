@@ -7,10 +7,11 @@ Built on the Evennia MU* framework: https://www.evennia.com/
 ## Installation
 Will make this smoother at some point. Best way to install to:
 1. Clone this repo
-2. Set up virtual environment
-3. Use `evennia --initmissing` and then `evennia migrate` to create a new db and other set up stuff.  Should only have to do this once.
-4. Add your OpenAI api key to either the environmental variable `OPENAI_API_KEY` or update either `\server\conf\settings.py` or create `\server\conf\secret_settings.py` with `OPENAI_KEY = "<your OpenAI key>"`
-5. Use `evennia start` to start up the MUD server.  If you did everything right, you should be able to access your MUD from _localhost_. localhost, port 4000 via telnet, or http://localhost:4001 to play via the Django 
+2. Set up virtual environment, for ex. `python -m venv venv`
+3. `pip install -r requirements.txt`
+4. Use `evennia --initmissing` and then `evennia migrate` to create a new db and other set up stuff.  Should only have to do this once.
+5. Add your OpenAI api key to either the environmental variable `OPENAI_API_KEY` or update either `\server\conf\settings.py` or create `\server\conf\secret_settings.py` with `OPENAI_KEY = "<your OpenAI key>"`
+6. Use `evennia start` to start up the MUD server.  If you did everything right, you should be able to access your MUD from _localhost_. localhost, port 4000 via telnet, or http://localhost:4001 to play via the Django 
 
 Check out https://www.evennia.com/docs/latest/index.html for more info on the mechanics of running the MUD
 
