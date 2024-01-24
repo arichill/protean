@@ -65,3 +65,6 @@ class Exit(ObjectParent, DefaultExit):
             self.db.desc = new_text
             self.save()
 
+
+class BlockedExit(Exit):
+    pass
