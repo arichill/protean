@@ -68,3 +68,7 @@ class Exit(ObjectParent, DefaultExit):
 
 class BlockedExit(Exit):
     pass
+
+class Above(Exit):
+    """An exit that needs a ladder in the room (at least for now)"""
+    pass
