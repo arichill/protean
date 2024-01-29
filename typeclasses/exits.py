@@ -69,6 +69,12 @@ class Exit(ObjectParent, DefaultExit):
 class BlockedExit(Exit):
     pass
 
+
 class Above(Exit):
-    """An exit that needs a ladder in the room (at least for now)"""
-    pass
+    """An exit that needs a ladder to traverse"""
+    lockstring = (
+        "control:id({id}) or perm(Admin); "
+        "delete:id({id}) or perm(Admin); "
+        "edit:id({id}) or perm(Admin); "
+        "traverse:id({id}) or perm(Admin) or holds(ladder)"
+    )
