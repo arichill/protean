@@ -17,9 +17,9 @@ if not openai.api_key:
 
 client = OpenAI()
 
-DECLARATION = "This is a text based game in a post-apocalyptic overgrown urban landscape."
+DECLARATION = "This is a text based game in a post-apocalyptic overgrown urban landscape. "
 
-TONE = "Tone should be gritty, but wistful."  # \
+TONE = "Tone should be gritty, but wistful. "  # \
 # "This is a text based game in a post-apocalyptic overgrown urban landscape. "\
 # "The city generally has dilapidated, abandoned buildings with various plants " \
 # "of all types growing all over.  "\
@@ -29,7 +29,7 @@ TONE = "Tone should be gritty, but wistful."  # \
 # "\n\n"
 
 SETTING_DESCRIPTION = "The city generally has dilapidated, abandoned buildings with various plants " \
-    "of all types growing all over." \
+    "of all types growing all over.  " \
     "Emphasize the enormous amount of junk left by the old society " \
     "as well as the vigorous growth and activity by nature."
 
@@ -60,7 +60,7 @@ def make_prompt(additional_text, tone=True, setting=True):
     text_items.append("\n\n")
     text_items.append(additional_text)
 
-    return " ".join(text_items)
+    return "".join(text_items)
 
 
 def generate_text(prompt, max_tokens=150, model='gpt-3.5-turbo-instruct'):
