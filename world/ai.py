@@ -17,14 +17,21 @@ if not openai.api_key:
 
 client = OpenAI()
 
-TONE = \
-    "This is a text based game in a post-apocalyptic overgrown urban landscape. "\
-    "The city generally has dilapidated, abandoned buildings with various plants " \
-    "of all types growing all over.  "\
-    "Tone should be gritty, but wistful. "\
-    "Emphasize the enormous amount of junk left by the old society "\
-    "as well as the vigorous growth and activity by nature."\
-    "\n\n"
+DECLARATION = "This is a text based game in a post-apocalyptic overgrown urban landscape. "
+
+TONE = "Tone should be gritty, but wistful. "  # \
+# "This is a text based game in a post-apocalyptic overgrown urban landscape. "\
+# "The city generally has dilapidated, abandoned buildings with various plants " \
+# "of all types growing all over.  "\
+# "Tone should be gritty, but wistful. "\
+# "Emphasize the enormous amount of junk left by the old society "\
+# "as well as the vigorous growth and activity by nature."\
+# "\n\n"
+
+SETTING_DESCRIPTION = "The city generally has dilapidated, abandoned buildings with various plants " \
+    "of all types growing all over.  " \
+    "Emphasize the enormous amount of junk left by the old society " \
+    "as well as the vigorous growth and activity by nature."
 
 # not sure yet about the style of the var names for the various prompts and prompt fragments
 pickup_item_prompt = \
@@ -44,8 +51,16 @@ container_objects = [
 ]
 
 
-def make_prompt(additional_text):
-    return TONE + additional_text  # + "\nDescription:\n"
+def make_prompt(additional_text, tone=True, setting=True):
+    text_items = [DECLARATION]
+    if tone:
+        text_items.append(TONE)
+    if setting:
+        text_items.append(SETTING_DESCRIPTION)
+    text_items.append("\n\n")
+    text_items.append(additional_text)
+
+    return "".join(text_items)
 
 
 def generate_text(prompt, max_tokens=150, model='gpt-3.5-turbo-instruct'):
@@ -56,7 +71,7 @@ def generate_text(prompt, max_tokens=150, model='gpt-3.5-turbo-instruct'):
         prompt=prompt,
         max_tokens=max_tokens,
         top_p=.9,
-        frequency_penalty=.2
+        frequency_penalty=.25
     )
     print(f"Completion:\n{completion}")
 
@@ -80,7 +95,7 @@ def chat_complete(messages):
 
 
 def basic_chat_start(additional_text=""):
-    return [{"role": "system", "content": TONE + additional_text}]
+    return [{"role": "system", "content": DECLARATION + TONE + SETTING_DESCRIPTION + additional_text}]
 
 
 class Messages:
@@ -106,4 +121,4 @@ class Messages:
         if "role" in message_dict and "content" in message_dict:
             self.list.append(message_dict)
         else:
-            raise TypeError
+            raise TypeError("Message dictionary must have a 'role' and a 'content'")

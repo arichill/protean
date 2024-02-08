@@ -189,7 +189,8 @@ class Object(ObjectParent, DefaultObject):
     """
 
     def at_object_creation(self):
-        self.db.article = self.db.article or "a"  # Don't need this now that I know what inflect is
+        pass
+        # self.db.article = self.db.article or "a"  # Don't need this now that I know what inflect is
 
     def at_get(self, getter, **kwargs):
         if self.location.is_typeclass('typeclasses.containers.Container'):
@@ -216,16 +217,18 @@ class Object(ObjectParent, DefaultObject):
             self.write_get_err_msg()
 
     def describe(self):
-        addl_info = [("Item", self.key),
-                     ("Location",
-                      f"in {self.location}'s inventory" if self.location.is_typeclass('typeclasses.characters.Character')
-                      else self.location),
-                     ("Short description", "")
-                     ]
-        prompt = make_prompt(zip_up_to_str(addl_info))
+        # addl_info = [("Item", self.key),
+        #              ("Location",
+        #               f"in {self.location}'s inventory" if self.location.is_typeclass('typeclasses.characters.Character')
+        #               else self.location),
+        #              ("Short description", "")
+        #              ]
+        # prompt = make_prompt(zip_up_to_str(addl_info))
         # self.location.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
+        prompt = make_prompt(f"A short description for {_INFLECT.a(self.key)}:\n",
+                             setting=False)
 
-        new_text = generate_text(prompt)
+        new_text = generate_text(prompt).strip()
 
         # prompt = f"Provide a description for: {self.key}"
         # self.location.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
@@ -253,7 +256,7 @@ class Scenery(Object):
         super().at_object_creation()
         self.locks.add("get: false()")
 
-        self.write_get_err_msg()
+        # self.write_get_err_msg()
 
 
 def zip_up_to_str(list_of_tuples):

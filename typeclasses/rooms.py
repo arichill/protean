@@ -92,14 +92,14 @@ class Room(ObjectParent, DefaultRoom):
                 old_item.delete()
 
         # Starting the list with the items already in the room
-        items = [_INFLECT.an(i.key) for i in self.contents_get(content_type="object")]
+        items = [i.key for i in self.contents_get(content_type="object")]
 
         # Make sure the prompt ends with the list item delimiter, so that the LLM starts with
         # a new item, rather than appending to the last item in the list
         sep = "\n-"
-        items.append(sep)
+        items.append("")
 
-        prompt = make_prompt(f"A simple list of items in {location}{sep.join(items)}")
+        prompt = make_prompt(f"A simple list of items in {location}:{sep}{sep.join(items)}")
         # self.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
 
         # Sometimes the LLM keeps going after the list.
@@ -115,11 +115,17 @@ class Room(ObjectParent, DefaultRoom):
         # Simple parser for now, but this is holding a place for when I get more advanced parsing
         # Although really this should be in the ai.py file if it gets more complex
         def parse(item_str):
-            return item_str \
+            item_str\
                 .strip()\
                 .strip("-")\
                 .removeprefix("a ").removeprefix("A ")\
-                .removeprefix("an ").removeprefix("An ")\
+                .removeprefix("an ").removeprefix("An ")
+
+            _item = _INFLECT.singular_noun(item_str)
+            if _item:
+                return _item.strip()
+            else:
+                return item_str.strip()
 
         for item in new_item_list:
             if items_spawned >= num_of_items:
