@@ -89,9 +89,7 @@ def chat_complete(messages):
     )
     print(f"Completion:\n{completion}")
 
-    if completion:
-        return completion.choices
-    return []
+    return completion.choices or []
 
 
 def basic_chat_start(additional_text=""):
@@ -122,3 +120,6 @@ class Messages:
             self.list.append(message_dict)
         else:
             raise TypeError("Message dictionary must have a 'role' and a 'content'")
+
+    def last(self):
+        return self.list[-1]["content"]
