@@ -76,5 +76,8 @@ class Above(Exit):
         "control:id({id}) or perm(Admin); "
         "delete:id({id}) or perm(Admin); "
         "edit:id({id}) or perm(Admin); "
-        "traverse:id({id}) or perm(Admin) or holds(ladder)"
+        "traverse:holds(ladder);"
     )
+
+    def at_init(self):
+        self.locks.add(Above.lockstring)
