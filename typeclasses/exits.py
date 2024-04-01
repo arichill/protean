@@ -80,7 +80,6 @@ class Above(Exit):
     )
 
     def at_init(self):
-        print(Above.lockstring)
         self.locks.add(Above.lockstring)
 
     def at_failed_traverse(self, traversing_object, **kwargs):
