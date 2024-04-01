@@ -35,7 +35,8 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         """
         super().at_cmdset_creation()
         self.add(ContainerCmdSet)
-
+        self.add(CmdDescribify)
+        self.add(SpawnItems)
 
 class CustomCmdSet(CmdSet):
     def at_cmdset_creation(self):
