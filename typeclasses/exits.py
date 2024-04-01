@@ -73,11 +73,15 @@ class BlockedExit(Exit):
 class Above(Exit):
     """An exit that needs a ladder to traverse"""
     lockstring = (
-        "control:id({id}) or perm(Admin); "
-        "delete:id({id}) or perm(Admin); "
-        "edit:id({id}) or perm(Admin); "
-        "traverse:holds(ladder);"
+        "control:id({id}) or perm(Admin);"
+        "delete:id({id}) or perm(Admin);"
+        "edit:id({id}) or perm(Admin);"
+        "traverse:holds(ladder)"
     )
 
     def at_init(self):
+        print(Above.lockstring)
         self.locks.add(Above.lockstring)
+
+    def at_failed_traverse(self, traversing_object, **kwargs):
+        traversing_object.msg("Can't reach up that far.")
