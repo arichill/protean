@@ -28,7 +28,8 @@ TONE = "Tone should be gritty, but wistful. "  # \
 # "as well as the vigorous growth and activity by nature."\
 # "\n\n"
 
-SETTING_DESCRIPTION = "The city generally has dilapidated, abandoned buildings with various plants " \
+SETTING_DESCRIPTION = \
+    "The city generally has dilapidated, abandoned buildings with various plants " \
     "of all types growing all over.  " \
     "Emphasize the enormous amount of junk left by the old society " \
     "as well as the vigorous growth and activity by nature."
@@ -43,7 +44,7 @@ pickup_item_prompt = \
 
 # I'm still pretty sure these *_objects lists should be in prototypes.py
 scenic_objects = [
-    "window", "car", "building", "pile", "rubble", "tree", "vine", "house", "plant"
+    "window", "car ", "building", "pile", "rubble", "tree", "vine", "house", "plant", "wall"
 ]
 
 container_objects = [
@@ -71,7 +72,7 @@ def generate_text(prompt, max_tokens=150, model='gpt-3.5-turbo-instruct'):
         prompt=prompt,
         max_tokens=max_tokens,
         top_p=.9,
-        frequency_penalty=.25
+        frequency_penalty=.35
     )
     print(f"Completion:\n{completion}")
 
