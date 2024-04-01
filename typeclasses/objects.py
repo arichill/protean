@@ -210,6 +210,11 @@ class Object(ObjectParent, DefaultObject):
             prompt = make_prompt(f"A character no longer has {_INFLECT.a(self.name)}.\n"
                                  f"Write a short message:\n")
 
+            # If a user dropped ephemera into a location, we'll delete it as long as we're tagging LLM generated items
+            # as ephemera
+            if self.tags.has("ephemera"):
+                self.delete()
+
         dropper.msg(generate_text(prompt))
 
     def at_access(self, result, accessing_obj, access_type, **kwargs):
