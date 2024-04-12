@@ -106,7 +106,7 @@ class Messages:
     def __call__(self, *args, **kwargs):
         return self.list
 
-    def __repr__(self):
+    def __str__(self):
         sep = ', \n'
         return f"[{sep.join([repr(d) for d in self.list])}]"
 
