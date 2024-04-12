@@ -58,6 +58,7 @@ class CmdDescribify(Command):
             return
 
         target.describe()
+        self.caller.msg(target.db.desc)
 
 
 class TakeAPicture(Command):
