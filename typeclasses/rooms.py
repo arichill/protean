@@ -5,6 +5,7 @@ Rooms are simple containers that has no location of their own.
 
 """
 from evennia.objects.objects import DefaultRoom, DefaultObject
+from evennia.utils.utils import delay
 from evennia import create_object
 from .objects import ObjectParent, Scenery, make_prompt, generate_text, zip_up_to_str
 from world.ai import Messages, chat_complete, scenic_objects, container_objects
@@ -49,18 +50,15 @@ class Room(ObjectParent, DefaultRoom):
         # Making scenery special allows for some control
         items = [_INFLECT.an(i.key) for i in self.contents_get(content_type="scenery")]
 
-        # While we're here let's get new descriptions for the scenery items.
-        for i in self.contents_get(content_type="scenery"):
-            assert isinstance(i, Scenery)
-            i.describe()
         # addl_info.append(("Description", ""))
 
         # prompt = make_prompt(
         #     f"Location: {location}.\nExits:\n-{'-'.join(exits)}\nItems:\n{', '.join(items)}\nLocation description:")
 
-        prompt = f"Provide a very short description of a location: {location}.\n" \
+        prompt = f"Location: {location}.\n" \
                  f"Exits:\n-{'-'.join(exits)}\n" \
-                 f"Scenery:\n{', '.join(items)}\n"
+                 f"Scenery:\n{', '.join(items)}\n" \
+                 f"Provide a very short description:\n"
 
         # self.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
         # new_text = generate_text(prompt)
@@ -77,6 +75,11 @@ class Room(ObjectParent, DefaultRoom):
             self.db.desc = new_text.content
             self.db.used_prompt = prompt
             self.save()
+
+        # While we're here let's get new descriptions for the scenery items.
+        for i in self.contents_get(content_type="scenery"):
+            assert isinstance(i, Scenery)
+            delay(1, i.describe)
 
     def spawn_items(self):
         # It would be interesting if the # of items generated is a property of the object
