@@ -222,13 +222,6 @@ class Object(ObjectParent, DefaultObject):
             self.write_get_err_msg()
 
     def describe(self):
-        # addl_info = [("Item", self.key),
-        #              ("Location",
-        #               f"in {self.location}'s inventory" if self.location.is_typeclass('typeclasses.characters.Character')
-        #               else self.location),
-        #              ("Short description", "")
-        #              ]
-        # prompt = make_prompt(zip_up_to_str(addl_info))
         # self.location.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
         prompt = make_prompt(f"A short description for {_INFLECT.a(self.key)}:\n",
                              setting=False)
