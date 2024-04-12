@@ -206,16 +206,18 @@ class Object(ObjectParent, DefaultObject):
         if self.location.is_typeclass('typeclasses.containers.Container'):
             prompt = make_prompt(f"A character put {_INFLECT.a(self.name)} in {_INFLECT.a(self.location.name)}.\n"
                                  f"Write a short message:\n")
-        else:
+
+        elif self.tags.has("ephemera"):
+            # If a user dropped ephemera into a location, let's delete it as long as we're tagging LLM generated items
+            # as ephemera
             prompt = make_prompt(f"A character no longer has {_INFLECT.a(self.name)}.\n"
                                  f"Write a short message:\n")
+            self.delete()
+        else:
+            prompt = make_prompt(f"A character put down {_INFLECT.a(self.name)}.\n"
+                                 f"Write a short message:\n")
 
-            # If a user dropped ephemera into a location, we'll delete it as long as we're tagging LLM generated items
-            # as ephemera
-            if self.tags.has("ephemera"):
-                self.delete()
-
-        dropper.msg(generate_text(prompt))
+        self.location.msg(generate_text(prompt))
 
     def at_access(self, result, accessing_obj, access_type, **kwargs):
         if not result and access_type == "get":
