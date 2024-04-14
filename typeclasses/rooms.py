@@ -58,7 +58,7 @@ class Room(ObjectParent, DefaultRoom):
         prompt = f"Location: {location}.\n" \
                  f"Exits:\n-{'-'.join(exits)}\n" \
                  f"Scenery:\n{', '.join(items)}\n" \
-                 f"Provide a very short description:\n"
+                 f"Provide a short description:\n"
 
         # self.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
         # new_text = generate_text(prompt)
@@ -82,6 +82,8 @@ class Room(ObjectParent, DefaultRoom):
             delay(1, i.describe)
 
     def spawn_items(self):
+        print(f"Spawning items in {self.name}")
+
         # It would be interesting if the # of items generated is a property of the object
         num_of_items = randint(2, 6)
         items_spawned = 0
@@ -89,10 +91,7 @@ class Room(ObjectParent, DefaultRoom):
         location = _INFLECT.a(self.key)
 
         # Remove all the old items spawned, keep the MUD 'tidy' for now.
-        for old_item in self.contents_get(content_type="object"):
-            if old_item.db.ephemera or old_item.tags.has("ephemera"):
-                self.msg_contents(f"Removing {old_item.key}")
-                old_item.delete()
+        self.clear_ephemera()
 
         # Starting the list with the items already in the room
         items = [i.key for i in self.contents_get(content_type="object")]
@@ -165,4 +164,11 @@ class Room(ObjectParent, DefaultRoom):
 
         self.msg_contents("|G{}|n".format("".join(dream)))
 
-        self.describe()
+        delay(1, self.describe())
+
+    def clear_ephemera(self):
+        """Remove spawned items from the room"""
+        for old_item in self.contents_get(content_type="object"):
+            if old_item.db.ephemera or old_item.tags.has("ephemera"):
+                self.msg_contents(f"Removing {old_item.key}")
+                old_item.delete()

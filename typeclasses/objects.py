@@ -12,6 +12,7 @@ inheritance.
 """
 
 from evennia.objects.objects import DefaultObject
+from evennia.utils.utils import delay
 from world.ai import make_prompt, generate_text, Messages, chat_complete
 
 import inflect
@@ -35,11 +36,12 @@ class ObjectParent:
     def get_display_desc(self, looker, **kwargs):
         """Updates the description if it's empty or the default"""
         assert isinstance(self, DefaultObject)
+
         if not self.db.desc or self.db.desc == "You see nothing special.":
             assert isinstance(self, ObjectParent)
-            self.describe()
+            delay(1, self.describe())
 
-        return self.db.desc or "You see nothing special."
+        return self.db.desc or f"You try to look at {self.name}, but it's still more blur than anything. Give it a sec."
 
 
 class Object(ObjectParent, DefaultObject):
@@ -190,6 +192,7 @@ class Object(ObjectParent, DefaultObject):
 
     def at_object_creation(self):
         pass
+        # self.db.desc = f"You try to look at {self.name}, but it's still more blur than anything. Maybe give it a sec"
         # self.db.article = self.db.article or "a"  # Don't need this now that I know what inflect is
 
     def at_get(self, getter, **kwargs):
@@ -217,17 +220,25 @@ class Object(ObjectParent, DefaultObject):
             prompt = make_prompt(f"A character put down {_INFLECT.a(self.name)}.\n"
                                  f"Write a short message:\n")
 
-        self.location.msg(generate_text(prompt))
+        self.location.msg_contents(generate_text(prompt))
 
     def at_access(self, result, accessing_obj, access_type, **kwargs):
-        if not result and access_type == "get":
+        if not result and not self.db.get_err_msg and access_type == "get":
             self.write_get_err_msg()
 
     def describe(self):
-        # self.location.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
+        prompt_sentences = [
+            f"Provide a short description for {_INFLECT.a(self.key)}"
+        ]
+
+        if self.tags.has("ephemera"):
+            prompt_sentences.append(
+                "It has an ephemeral quality, as if it might disappear any moment."
+            )
+
         prompt = make_prompt(f"A short description for {_INFLECT.a(self.key)}:\n",
                              setting=False)
-
+        # self.location.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
         new_text = generate_text(prompt).strip()
 
         # prompt = f"Provide a description for: {self.key}"
@@ -241,6 +252,7 @@ class Object(ObjectParent, DefaultObject):
         if new_text:
             self.db.desc = new_text
             # self.db.desc = new_text["content"]
+            self.db.used_prompt = prompt
             self.save()
 
     def write_get_err_msg(self):
@@ -256,7 +268,7 @@ class Scenery(Object):
         super().at_object_creation()
         self.locks.add("get: false()")
 
-        # self.write_get_err_msg()
+        delay(1, self.write_get_err_msg())
 
 
 def zip_up_to_str(list_of_tuples):
