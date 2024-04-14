@@ -1,11 +1,6 @@
 r"""
 Evennia settings file.
 
-The available options are found in the default settings file found
-here:
-
-D:\Dropbox (Personal)\PycharmProjects\mud\venv\lib\site-packages\evennia\settings_default.py
-
 Remember:
 
 Don't copy more from the default file than you actually intend to
