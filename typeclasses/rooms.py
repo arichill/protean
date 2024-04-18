@@ -4,7 +4,7 @@ Room
 Rooms are simple containers that has no location of their own.
 
 """
-from evennia.objects.objects import DefaultRoom, DefaultObject
+from evennia.objects.objects import DefaultRoom
 from evennia.utils.utils import delay
 from evennia import create_object
 from .objects import ObjectParent, Scenery, make_prompt, generate_text
@@ -31,7 +31,7 @@ class Room(ObjectParent, DefaultRoom):
         self.db.preposition = "at"
 
     def describe(self):
-        addl_info = []
+        # addl_info = []
 
         # This is sort of a placeholder. I think different types of rooms will have different
         # "prepositions" or I guess it's just 'what is before the self.name in the prompt'
@@ -117,6 +117,10 @@ class Room(ObjectParent, DefaultRoom):
         # Simple parser for now, but this is holding a place for when I get more advanced parsing
         # Although really this should be in the ai.py file if it gets more complex
         def parse(item_str):
+            # Honestly I kinda like the extra stuff after the comma although it isn't very "MUD-like"
+            # I'd prefer a way to use it rather than just splitting it off
+            item_str = item_str.split(",")[0]
+
             item_str\
                 .strip()\
                 .strip("-")\
