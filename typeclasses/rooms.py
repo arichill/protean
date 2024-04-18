@@ -116,6 +116,7 @@ class Room(ObjectParent, DefaultRoom):
 
         # Simple parser for now, but this is holding a place for when I get more advanced parsing
         # Although really this should be in the ai.py file if it gets more complex
+        # Thinking more, I will most likely have a lang.py file
         def parse(item_str):
             # Honestly I kinda like the extra stuff after the comma although it isn't very "MUD-like"
             # I'd prefer a way to use it rather than just splitting it off

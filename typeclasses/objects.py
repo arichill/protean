@@ -191,7 +191,7 @@ class Object(ObjectParent, DefaultObject):
     """
 
     def at_object_creation(self):
-        pass
+        delay(1, self.describe())
         # self.db.desc = f"You try to look at {self.name}, but it's still more blur than anything. Maybe give it a sec"
         # self.db.article = self.db.article or "a"  # Don't need this now that I know what inflect is
 
@@ -261,6 +261,7 @@ class Object(ObjectParent, DefaultObject):
         prompt = make_prompt(f"A character tried to pick up {_INFLECT.a(self.name)} and could not\n"
                              f"Write a short message:\n")
         self.db.get_err_msg = generate_text(prompt)
+# TODO: consider composite objects
 
 
 class Scenery(Object):
