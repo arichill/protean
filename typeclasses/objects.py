@@ -269,7 +269,3 @@ class Scenery(Object):
         self.locks.add("get: false()")
 
         delay(1, self.write_get_err_msg())
-
-
-def zip_up_to_str(list_of_tuples):
-    return "\n".join(["{}: {}".format(a, b) for a, b in list_of_tuples])

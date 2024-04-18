@@ -7,7 +7,7 @@ Rooms are simple containers that has no location of their own.
 from evennia.objects.objects import DefaultRoom, DefaultObject
 from evennia.utils.utils import delay
 from evennia import create_object
-from .objects import ObjectParent, Scenery, make_prompt, generate_text, zip_up_to_str
+from .objects import ObjectParent, Scenery, make_prompt, generate_text
 from world.ai import Messages, chat_complete, scenic_objects, container_objects
 
 import inflect

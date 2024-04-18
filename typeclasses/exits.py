@@ -8,7 +8,7 @@ for allowing Characters to traverse the exit to its destination.
 """
 from evennia.objects.objects import DefaultExit
 
-from .objects import ObjectParent, make_prompt, generate_text, zip_up_to_str
+from .objects import ObjectParent, make_prompt, generate_text
 from typeclasses.rooms import Room
 
 import inflect
