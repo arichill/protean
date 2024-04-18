@@ -66,6 +66,7 @@ def make_prompt(additional_text, tone=True, setting=True):
 
 def generate_text(prompt, max_tokens=150, model='gpt-3.5-turbo-instruct'):
     """Returns the text of a completion prompt"""
+    # TODO: separate logger for prompts
     print(f"Prompt:\n{prompt}")
     completion = client.completions.create(
         model=model,
