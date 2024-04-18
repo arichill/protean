@@ -212,7 +212,7 @@ class Object(ObjectParent, DefaultObject):
 
         elif self.tags.has("ephemera"):
             # If a user dropped ephemera into a location, let's delete it as long as we're tagging LLM generated items
-            # as ephemera
+            # as ephemera. Or I come up with something else.
             prompt = make_prompt(f"A character no longer has {_INFLECT.a(self.name)}.\n"
                                  f"Write a short message:\n")
             self.delete()
@@ -220,7 +220,7 @@ class Object(ObjectParent, DefaultObject):
             prompt = make_prompt(f"A character put down {_INFLECT.a(self.name)}.\n"
                                  f"Write a short message:\n")
 
-        self.location.msg_contents(generate_text(prompt))
+        dropper.location.msg_contents(generate_text(prompt))
 
     def at_access(self, result, accessing_obj, access_type, **kwargs):
         if not result and not self.db.get_err_msg and access_type == "get":
@@ -235,10 +235,12 @@ class Object(ObjectParent, DefaultObject):
             prompt_sentences.append(
                 "It has an ephemeral quality, as if it might disappear any moment."
             )
+        # prompt = make_prompt(f"A short description for {_INFLECT.a(self.key)}:\n",
+        #                      setting=False)
 
-        prompt = make_prompt(f"A short description for {_INFLECT.a(self.key)}:\n",
+        prompt = make_prompt(f"{' '.join(prompt_sentences)}:\n",
                              setting=False)
-        # self.location.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
+
         new_text = generate_text(prompt).strip()
 
         # prompt = f"Provide a description for: {self.key}"
