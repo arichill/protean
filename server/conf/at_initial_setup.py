@@ -19,4 +19,4 @@ from evennia import search_object, settings
 
 def at_initial_setup():
     limbo = search_object("#2", typeclass=settings.BASE_ROOM_TYPECLASS)[0]
-    limbo.db.desc = "At the end, a new beginning"
+    limbo.db.desc = "At last, a new beginning"
