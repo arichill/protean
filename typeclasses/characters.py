@@ -39,10 +39,12 @@ class Character(ObjectParent, DefaultCharacter):
         :param kwargs:
         :return:
         """
-        self.msg("""         |cWake up {name}|n. 
+        self.msg("""
+         |cWake up {name}|n. 
         
 Huh, what was that? You rub the sand out of your eyes, leaving behind a blurry mess.
 What happened? Oh yeah, the world stopped... right? Hard to know what's real these days. Maybe this is all a bad dream...
+You look around.
 """.format(name=self.key))
         self.msg((self.at_look(self.location), {"type": "look"}), options=None)
 

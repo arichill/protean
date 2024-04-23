@@ -37,10 +37,6 @@ class Command(BaseCommand):
         self.target = self.args
 
 
-def zip_up_to_str(list_of_tuples):
-    return "\n".join(["{}: {}".format(a, b) for a, b in list_of_tuples])
-
-
 class CmdDescribify(Command):
     """
     Command to update an items description with text generated from LLM or similar
@@ -58,6 +54,25 @@ class CmdDescribify(Command):
             return
 
         target.describe()
+        self.caller.msg(self.caller.at_look(target))
+
+
+class CmdHold(Command):
+    """
+    Command so that targeted item is not removed with other LLM generated items
+    """
+
+    key = "hold"
+
+    def func(self):
+        target = self.caller.search(self.target)
+        if not target:
+            return
+
+        if target.tags.has('ephemera'):
+            target.tags.remove('ephemera')
+        else:
+            self.caller.msg("You weren't in danger of losing that anytime soon.")
 
 
 class TakeAPicture(Command):

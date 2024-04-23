@@ -8,7 +8,7 @@ for allowing Characters to traverse the exit to its destination.
 """
 from evennia.objects.objects import DefaultExit
 
-from .objects import ObjectParent, make_prompt, generate_text, zip_up_to_str
+from .objects import ObjectParent, make_prompt, generate_text
 from typeclasses.rooms import Room
 
 import inflect
@@ -73,11 +73,14 @@ class BlockedExit(Exit):
 class Above(Exit):
     """An exit that needs a ladder to traverse"""
     lockstring = (
-        "control:id({id}) or perm(Admin); "
-        "delete:id({id}) or perm(Admin); "
-        "edit:id({id}) or perm(Admin); "
-        "traverse:holds(ladder);"
+        "control:id({id}) or perm(Admin);"
+        "delete:id({id}) or perm(Admin);"
+        "edit:id({id}) or perm(Admin);"
+        "traverse:holds(ladder)"
     )
 
     def at_init(self):
         self.locks.add(Above.lockstring)
+
+    def at_failed_traverse(self, traversing_object, **kwargs):
+        traversing_object.msg("Can't reach up that far.")

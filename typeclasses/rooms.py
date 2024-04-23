@@ -4,9 +4,10 @@ Room
 Rooms are simple containers that has no location of their own.
 
 """
-from evennia.objects.objects import DefaultRoom, DefaultObject
+from evennia.objects.objects import DefaultRoom
+from evennia.utils.utils import delay
 from evennia import create_object
-from .objects import ObjectParent, Scenery, make_prompt, generate_text, zip_up_to_str
+from .objects import ObjectParent, Scenery, make_prompt, generate_text
 from world.ai import Messages, chat_complete, scenic_objects, container_objects
 
 import inflect
@@ -30,7 +31,7 @@ class Room(ObjectParent, DefaultRoom):
         self.db.preposition = "at"
 
     def describe(self):
-        addl_info = []
+        # addl_info = []
 
         # This is sort of a placeholder. I think different types of rooms will have different
         # "prepositions" or I guess it's just 'what is before the self.name in the prompt'
@@ -49,18 +50,15 @@ class Room(ObjectParent, DefaultRoom):
         # Making scenery special allows for some control
         items = [_INFLECT.an(i.key) for i in self.contents_get(content_type="scenery")]
 
-        # While we're here let's get new descriptions for the scenery items.
-        for i in self.contents_get(content_type="scenery"):
-            assert isinstance(i, Scenery)
-            i.describe()
         # addl_info.append(("Description", ""))
 
         # prompt = make_prompt(
         #     f"Location: {location}.\nExits:\n-{'-'.join(exits)}\nItems:\n{', '.join(items)}\nLocation description:")
 
-        prompt = f"Provide a very short description of a location: {location}.\n" \
+        prompt = f"Location: {location}.\n" \
                  f"Exits:\n-{'-'.join(exits)}\n" \
-                 f"Scenery:\n{', '.join(items)}\n"
+                 f"Scenery:\n{', '.join(items)}\n" \
+                 f"Provide a short description:\n"
 
         # self.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
         # new_text = generate_text(prompt)
@@ -78,7 +76,14 @@ class Room(ObjectParent, DefaultRoom):
             self.db.used_prompt = prompt
             self.save()
 
+        # While we're here let's get new descriptions for the scenery items.
+        for i in self.contents_get(content_type="scenery"):
+            assert isinstance(i, Scenery)
+            delay(1, i.describe)
+
     def spawn_items(self):
+        print(f"Spawning items in {self.name}")
+
         # It would be interesting if the # of items generated is a property of the object
         num_of_items = randint(2, 6)
         items_spawned = 0
@@ -86,10 +91,7 @@ class Room(ObjectParent, DefaultRoom):
         location = _INFLECT.a(self.key)
 
         # Remove all the old items spawned, keep the MUD 'tidy' for now.
-        for old_item in self.contents_get(content_type="object"):
-            if old_item.db.ephemera or old_item.tags.has("ephemera"):
-                self.msg_contents(f"Removing {old_item.key}")
-                old_item.delete()
+        self.clear_ephemera()
 
         # Starting the list with the items already in the room
         items = [i.key for i in self.contents_get(content_type="object")]
@@ -115,6 +117,10 @@ class Room(ObjectParent, DefaultRoom):
         # Simple parser for now, but this is holding a place for when I get more advanced parsing
         # Although really this should be in the ai.py file if it gets more complex
         def parse(item_str):
+            # Honestly I kinda like the extra stuff after the comma although it isn't very "MUD-like"
+            # I'd prefer a way to use it rather than just splitting it off
+            item_str = item_str.split(",")[0]
+
             item_str\
                 .strip()\
                 .strip("-")\
@@ -162,4 +168,11 @@ class Room(ObjectParent, DefaultRoom):
 
         self.msg_contents("|G{}|n".format("".join(dream)))
 
-        self.describe()
+        delay(1, self.describe())
+
+    def clear_ephemera(self):
+        """Remove spawned items from the room"""
+        for old_item in self.contents_get(content_type="object"):
+            if old_item.db.ephemera or old_item.tags.has("ephemera"):
+                self.msg_contents(f"Removing {old_item.key}")
+                old_item.delete()
