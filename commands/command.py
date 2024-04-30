@@ -54,7 +54,7 @@ class CmdDescribify(Command):
             return
 
         target.describe()
-        self.caller.msg(self.caller.at_look(target))
+        self.msg(self.caller.at_look(target))
 
 
 class CmdHold(Command):
@@ -72,7 +72,7 @@ class CmdHold(Command):
         if target.tags.has('ephemera'):
             target.tags.remove('ephemera')
         else:
-            self.caller.msg("You weren't in danger of losing that anytime soon.")
+            self.msg("You weren't in danger of losing that anytime soon.")
 
 
 class TakeAPicture(Command):
@@ -109,7 +109,7 @@ class SpawnItems(Command):
         if target.is_typeclass('typeclasses.rooms.Room'):
             target.spawn_items()
         else:
-            self.caller.msg("Only rooms can spawn items, at this time")
+            self.msg("Only rooms can spawn items, at this time")
 
 
 class Clean(Command):
@@ -120,7 +120,7 @@ class Clean(Command):
 
     def func(self):
         if not self.target:
-            self.caller.msg("Appreciate the enthusiasm! Where would you like to start?")
+            self.msg("Appreciate the enthusiasm! Where would you like to start?")
             return
 
         target = self.caller.search(self.target)
@@ -128,9 +128,9 @@ class Clean(Command):
 
         if target.db.ephemera or target.tags.has("ephemera"):
             target.delete()
-            self.caller.msg(f"Cleaned up {target_name}. Feels good.")
+            self.msg(f"Cleaned up {target_name}. Feels good.")
         else:
-            self.caller.msg(f"{target_name.capitalize()} seems important somehow. Couldn't bear to throw it out.")
+            self.msg(f"{target_name.capitalize()} seems important somehow. Couldn't bear to throw it out.")
 # -------------------------------------------------------------
 #
 # The default commands inherit from
