@@ -227,33 +227,43 @@ class Object(ObjectParent, DefaultObject):
             self.write_get_err_msg()
 
     def describe(self):
-        prompt_sentences = [
-            f"Provide a short description for {_INFLECT.a(self.key)}"
-        ]
+        prompt_sentences = []
+        messages = Messages()
+
+        if self.location.is_typeclass('typeclasses.rooms.Room'):
+            messages.assistant(self.location.db.desc)
+            prompt_sentences.append(f"Provide a short description for {_INFLECT.a(self.key)} there.")
+        elif self.location.is_typeclass('typeclasses.characters.Character'):
+            prompt_sentences.append(f"Provide a short description for {_INFLECT.a(self.key)} (held).")
+        else:
+            prompt_sentences.append(f"Provide a short description for {_INFLECT.a(self.key)}.")
 
         if self.tags.has("ephemera"):
             prompt_sentences.append(
                 "It has an ephemeral quality, as if it might disappear any moment."
             )
+
+        prompt = f"{' '.join(prompt_sentences)}"
+
         # prompt = make_prompt(f"A short description for {_INFLECT.a(self.key)}:\n",
         #                      setting=False)
 
-        prompt = make_prompt(f"{' '.join(prompt_sentences)}:\n",
-                             setting=False)
+        # prompt = make_prompt(f"{' '.join(prompt_sentences)}:\n",
+        #                      setting=False)
+        #
+        # new_text = generate_text(prompt).strip()
 
-        new_text = generate_text(prompt).strip()
-
-        # prompt = f"Provide a description for: {self.key}"
         # self.location.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
         #
-        # chat_log = Messages()
-        # chat_log.assistant(prompt)
-        #
-        # new_text = chat_complete(messages=chat_log())
+
+        messages.user(prompt)
+
+        # See note in rooms.py, same issue.  I don't think it makes sense to use .message and .content with the wrapper
+        new_text = chat_complete(messages=messages())[0].message
 
         if new_text:
-            self.db.desc = new_text
-            # self.db.desc = new_text["content"]
+            # self.db.desc = new_text
+            self.db.desc = new_text.content
             self.db.used_prompt = prompt
             self.save()
 

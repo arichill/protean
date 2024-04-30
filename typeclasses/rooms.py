@@ -84,11 +84,14 @@ class Room(ObjectParent, DefaultRoom):
     def spawn_items(self):
         print(f"Spawning items in {self.name}")
 
+        chat_log = Messages()
+
         # It would be interesting if the # of items generated is a property of the object
         num_of_items = randint(2, 6)
         items_spawned = 0
 
         location = _INFLECT.a(self.key)
+        chat_log.user(f"A simple list of in {location}")
 
         # Remove all the old items spawned, keep the MUD 'tidy' for now.
         self.clear_ephemera()
@@ -99,14 +102,18 @@ class Room(ObjectParent, DefaultRoom):
         # Make sure the prompt ends with the list item delimiter, so that the LLM starts with
         # a new item, rather than appending to the last item in the list
         sep = "\n-"
-        items.append("")
+        # items.append("")
+        if items:
+            chat_log.assistant(f"{sep}{sep.join(items)}".strip())
 
-        prompt = make_prompt(f"A simple list of items in {location}:{sep}{sep.join(items)}")
+        # prompt = make_prompt(f"A simple list of items in {location}:{sep}{sep.join(items)}")
         # self.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
 
-        # Sometimes the LLM keeps going after the list.
-        # I can set a stop sequence, but for now I find them interesting.
-        new_items, *dream = generate_text(prompt).split("\n\n", 1)
+        # # Sometimes the LLM keeps going after the list.
+        # # I can set a stop sequence, but for now I find them interesting.
+        # new_items, *dream = generate_text(prompt).split("\n\n", 1)
+
+        new_items = chat_complete(messages=chat_log())[0].message  # Just making refactoring chat_complete harder for me
 
         # For now, only using some of the items generated.
         # Randomizing so that we can get the weirder ones at the bottom of the list
