@@ -3,6 +3,7 @@ Where I'm putting functions for talking to LLMs.  OpenAI stuff basically
 """
 
 from evennia import settings
+from evennia.utils import logger
 import openai
 from openai import OpenAI, OpenAIError
 
@@ -52,6 +53,10 @@ container_objects = [
 ]
 
 
+def log(msg):
+    logger.log_file(msg, filename="prompt.log")
+
+
 def make_prompt(additional_text, tone=True, setting=True):
     text_items = [DECLARATION]
     if tone:
@@ -68,6 +73,7 @@ def generate_text(prompt, max_tokens=150, model='gpt-3.5-turbo-instruct'):
     """Returns the text of a completion prompt"""
     # TODO: separate logger for prompts
     print(f"Prompt:\n{prompt}")
+    log(f"Prompt:\n{prompt}")
     completion = client.completions.create(
         model=model,
         prompt=prompt,
@@ -75,21 +81,26 @@ def generate_text(prompt, max_tokens=150, model='gpt-3.5-turbo-instruct'):
         top_p=.9,
         frequency_penalty=.35
     )
-    print(f"Completion:\n{completion}")
+    log(f"Completion:\n{completion}")
 
     return completion.choices[0].text
 
 
 def chat_complete(messages):
     """Simple wrapper for the Chat Completion endpoint. Returns list of choices."""
-    print(f"Messages:\n{messages}")
+    model = "gpt-3.5-turbo"
+    print(f"Sending messages to {model}::\n{messages[-1]}")
+    log(f"Messages::\n{messages}")
     completion = openai.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model=model,
         messages=messages,
         max_tokens=175,
         top_p=.9
     )
-    print(f"Completion:\n{completion}")
+    if completion:
+        if "usage" in completion:
+            print(f"Received completion. Used {completion.usage.total_tokens} tokens")
+        log(f"Completion:\n{completion}")
 
     return completion.choices or []
 
@@ -101,8 +112,16 @@ def basic_chat_start(additional_text=""):
 class Messages:
     """Manager of the array that the ChatCompletion uses.
     :return list of dicts {"role": "system" "user" or "assistant" :, "content": str}"""
-    def __init__(self, additional_text=""):
-        self.list = basic_chat_start(additional_text)
+    def __init__(self, chat_log=None, additional_text=""):
+        self.list = []
+        if isinstance(chat_log, Messages):
+            self.list = chat_log()
+        elif isinstance(chat_log, list):
+            for msg in chat_log:
+                self.add_message(msg)
+
+        if not self.list:
+            self.list = basic_chat_start(additional_text)
 
     def __call__(self, *args, **kwargs):
         return self.list
@@ -124,4 +143,7 @@ class Messages:
             raise TypeError("Message dictionary must have a 'role' and a 'content'")
 
     def last(self):
-        return self.list[-1]["content"]
+        return self.list[-1]
+
+    def last_message(self):
+        return self.last()["content"]
