@@ -84,3 +84,5 @@ class Above(Exit):
 
     def at_failed_traverse(self, traversing_object, **kwargs):
         traversing_object.msg("Can't reach up that far.")
+
+    # TODO Aliases of 'Above' should include up
