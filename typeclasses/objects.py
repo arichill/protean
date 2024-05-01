@@ -13,7 +13,7 @@ inheritance.
 
 from evennia.objects.objects import DefaultObject
 from evennia.utils.utils import delay
-from world.ai import make_prompt, generate_text, Messages, chat_complete
+from world.ai import make_prompt, generate_text, Messages, chat_complete, simple_openai_chat_complete
 
 import inflect
 _INFLECT = inflect.engine()
@@ -196,14 +196,19 @@ class Object(ObjectParent, DefaultObject):
         # self.db.article = self.db.article or "a"  # Don't need this now that I know what inflect is
 
     def at_get(self, getter, **kwargs):
-        if self.location.is_typeclass('typeclasses.containers.Container'):
-            prompt_text = f"A character retrieved {_INFLECT.a(self.name)} from {_INFLECT.a(self.location.name)}.\n"
-        else:
-            prompt_text = f"A character got {_INFLECT.a(self.name)}.\n"
+        if self.db.get_msg:
+            getter.msg(self.db.get_msg)
+            print("YOU GOT IT")
+            return
 
-        prompt = make_prompt(prompt_text +
-                             f"Write a short message:\n")
-        getter.msg(generate_text(prompt))
+        # if self.location.is_typeclass('typeclasses.containers.Container'):
+        #     prompt_text = f"A character retrieved {_INFLECT.a(self.name)} from {_INFLECT.a(self.location.name)}.\n"
+        # else:
+        #     prompt_text = f"A character got {_INFLECT.a(self.name)}.\n"
+        #
+        # prompt = make_prompt(prompt_text +
+        #                      f"Write a short message:\n")
+        # getter.msg(generate_text(prompt))
 
     def at_drop(self, dropper, **kwargs):
         if self.location.is_typeclass('typeclasses.containers.Container'):
@@ -226,6 +231,10 @@ class Object(ObjectParent, DefaultObject):
         if not result and not self.db.get_err_msg and access_type == "get":
             self.write_get_err_msg()
 
+    def at_post_move(self, source_location, move_type="move", **kwargs):
+        print("POST MOVE") # This happens before at_get()
+    #     delay(1, self.describe())
+
     def describe(self):
         prompt_sentences = []
         messages = Messages()
@@ -245,27 +254,36 @@ class Object(ObjectParent, DefaultObject):
 
         prompt = f"{' '.join(prompt_sentences)}"
 
-        # prompt = make_prompt(f"A short description for {_INFLECT.a(self.key)}:\n",
-        #                      setting=False)
-
-        # prompt = make_prompt(f"{' '.join(prompt_sentences)}:\n",
-        #                      setting=False)
-        #
-        # new_text = generate_text(prompt).strip()
-
-        # self.location.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
-        #
-
         messages.user(prompt)
 
-        # See note in rooms.py, same issue.  I don't think it makes sense to use .message and .content with the wrapper
-        new_text = chat_complete(messages=messages())[0].message
+        new_text = simple_openai_chat_complete(messages=messages())
 
         if new_text:
             # self.db.desc = new_text
-            self.db.desc = new_text.content
+            self.db.desc = new_text
             self.db.used_prompt = prompt
             self.save()
+            messages.assistant(new_text)
+        else:
+            return
+
+        messages.user(self.get_msg_prompt())
+
+        new_text = simple_openai_chat_complete(messages=messages())  # repetitious, repetitious
+
+        if new_text:
+            self.db.get_msg = new_text
+            self.save() # do this at the end?
+
+        print(f"{self.key} described")
+
+    def get_msg_prompt(self):
+        if self.location.is_typeclass('typeclasses.containers.Container'):
+            prompt_text = f"I retrieved the {self.name} from {_INFLECT.a(self.location.name)}.\n"
+        else:
+            prompt_text = f"I got the {self.name}.\n"
+
+        return prompt_text
 
     def write_get_err_msg(self):
         prompt = make_prompt(f"A character tried to pick up {_INFLECT.a(self.name)} and could not\n"

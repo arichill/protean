@@ -8,7 +8,7 @@ from evennia.objects.objects import DefaultRoom
 from evennia.utils.utils import delay
 from evennia import create_object
 from .objects import ObjectParent, Scenery, make_prompt, generate_text
-from world.ai import Messages, chat_complete, scenic_objects, container_objects
+from world.ai import Messages, chat_complete, scenic_objects, container_objects, simple_openai_chat_complete
 
 import inflect
 from random import randint, shuffle
@@ -113,7 +113,7 @@ class Room(ObjectParent, DefaultRoom):
         # # I can set a stop sequence, but for now I find them interesting.
         # new_items, *dream = generate_text(prompt).split("\n\n", 1)
 
-        new_items = chat_complete(messages=chat_log())[0].message  # Just making refactoring chat_complete harder for me
+        new_items = simple_openai_chat_complete(messages=chat_log())
 
         # For now, only using some of the items generated.
         # Randomizing so that we can get the weirder ones at the bottom of the list
@@ -174,7 +174,7 @@ class Room(ObjectParent, DefaultRoom):
             )
             items_spawned += 1
 
-        self.msg_contents("|G{}|n".format("".join(dream)))
+        # self.msg_contents("|G{}|n".format("".join(dream)))
 
         delay(1, self.describe())
 

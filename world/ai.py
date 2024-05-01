@@ -104,6 +104,12 @@ def chat_complete(messages):
     return completion.choices or []
 
 
+def simple_openai_chat_complete(messages):
+    choices = chat_complete(messages)
+    if choices:
+        return choices[0].message.content
+
+
 def basic_chat_start(additional_text=""):
     return [{"role": "system", "content": DECLARATION + TONE + SETTING_DESCRIPTION + additional_text}]
 
