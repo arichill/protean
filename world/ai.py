@@ -94,7 +94,8 @@ def chat_complete(messages):
         model=model,
         messages=messages,
         max_tokens=175,
-        top_p=.9
+        top_p=.9,
+        frequency_penalty=.5
     )
     if completion:
         if "usage" in completion:
