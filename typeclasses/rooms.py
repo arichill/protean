@@ -11,9 +11,32 @@ from .objects import ObjectParent, Scenery, make_prompt, generate_text
 from world.ai import Messages, chat_complete, scenic_objects, container_objects, simple_openai_chat_complete
 
 import inflect
+import spacy
 from random import randint, shuffle
 
 _INFLECT = inflect.engine()
+nlp = spacy.load('en_core_web_sm')
+
+
+def item_string_noun_phrase(item):
+    _item = ""
+    print(f"processing '{item}")
+
+    for token in nlp(item):
+        print(token.text, token.pos_, token.dep_)
+        if token.dep_ == "ROOT":
+            _item += token.lemma_
+            break
+        elif token.dep_ == "compound":
+            _item += token.text + " "
+        else:
+            _item = ""
+
+    # Putting this after so I can see the parts of speech in stdout
+    if len(item.split()) < 4:
+        return item
+
+    return _item
 
 
 class Room(ObjectParent, DefaultRoom):
@@ -29,6 +52,9 @@ class Room(ObjectParent, DefaultRoom):
 
     def at_object_creation(self):
         self.db.preposition = "at"
+
+    def at_init(self):
+        self.item_ideas = []
 
     def describe(self):
         # addl_info = []
@@ -83,63 +109,16 @@ class Room(ObjectParent, DefaultRoom):
 
     def spawn_items(self):
         print(f"Spawning items in {self.name}")
-
-        chat_log = Messages()
+        if not self.item_ideas:
+            print(f"Coming up with some new item ideas")
+            delay(1, self.new_possible_items)
+            return
 
         # It would be interesting if the # of items generated is a property of the object
         num_of_items = randint(2, 6)
         items_spawned = 0
 
-        location = _INFLECT.a(self.key)
-        chat_log.user(f"A simple list of in {location}")
-
-        # Remove all the old items spawned, keep the MUD 'tidy' for now.
-        self.clear_ephemera()
-
-        # Starting the list with the items already in the room
-        items = [i.key for i in self.contents_get(content_type="object")]
-
-        # Make sure the prompt ends with the list item delimiter, so that the LLM starts with
-        # a new item, rather than appending to the last item in the list
-        sep = "\n-"
-        # items.append("")
-        if items:
-            chat_log.assistant(f"{sep}{sep.join(items)}".strip())
-
-        # prompt = make_prompt(f"A simple list of items in {location}:{sep}{sep.join(items)}")
-        # self.msg_contents(f"|gSending prompt::|n\n|G{prompt}|n")
-
-        # # Sometimes the LLM keeps going after the list.
-        # # I can set a stop sequence, but for now I find them interesting.
-        # new_items, *dream = generate_text(prompt).split("\n\n", 1)
-
-        new_items = simple_openai_chat_complete(messages=chat_log())
-
-        # For now, only using some of the items generated.
-        # Randomizing so that we can get the weirder ones at the bottom of the list
-        # have a chance of getting in.
-        new_item_list = new_items.split(sep)
-        shuffle(new_item_list)
-
-        # Simple parser for now, but this is holding a place for when I get more advanced parsing
-        # Although really this should be in the ai.py file if it gets more complex
-        # Thinking more, I will most likely have a lang.py file
-        def parse(item_str):
-            # Honestly I kinda like the extra stuff after the comma although it isn't very "MUD-like"
-            # I'd prefer a way to use it rather than just splitting it off
-            item_str = item_str.split(",")[0]
-
-            item_str\
-                .strip()\
-                .strip("-")\
-                .removeprefix("a ").removeprefix("A ")\
-                .removeprefix("an ").removeprefix("An ")
-
-            _item = _INFLECT.singular_noun(item_str)
-            if _item:
-                return _item.strip()
-            else:
-                return item_str.strip()
+        new_item_list = self.item_ideas.copy()
 
         for item in new_item_list:
             if items_spawned >= num_of_items:
@@ -148,7 +127,7 @@ class Room(ObjectParent, DefaultRoom):
             if not item:
                 continue
 
-            item_name = parse(item)
+            item_name = item_string_noun_phrase(item)
             typeclass = "typeclasses.objects.Object"
 
             # So for now I'm doing some simple matching, seeing if various names from `scenic_objects`
@@ -169,9 +148,10 @@ class Room(ObjectParent, DefaultRoom):
                 key=item_name,
                 location=self,
                 home=self,
-                # locks="get:false()",  # Gonna try to handle this at the typeclass level
                 tags=["ephemera"]
             )
+            self.item_ideas.remove(item)
+
             items_spawned += 1
 
         # self.msg_contents("|G{}|n".format("".join(dream)))
@@ -184,3 +164,29 @@ class Room(ObjectParent, DefaultRoom):
             if old_item.db.ephemera or old_item.tags.has("ephemera"):
                 self.msg_contents(f"Removing {old_item.key}")
                 old_item.delete()
+        # Weird thing when I invoked this method using evennia shell interactively, is that the objects stayed when
+        # I 'looked' in the room, but I couldn't look 'at' the objects, since they were deleted.  So I'm going to try
+        # saving the room at the end.  Might be some weird db thing.
+        self.save()
+
+    def new_possible_items(self):
+        print(f"Getting a list of possible items in {self.name}")
+
+        chat_log = Messages()
+
+        chat_log.assistant(self.db.desc)
+        chat_log.user(f"A simple list of in {_INFLECT.a(self.key)}")
+
+        # Starting the list with the items already in the room
+        items = [i.key for i in self.contents_get(content_type="object")]
+
+        # Make sure the prompt ends with the list item delimiter, so that the LLM starts with
+        # a new item, rather than appending to the last item in the list
+        sep = "\n-"
+        if items:
+            chat_log.assistant(f"{sep}{sep.join(items)}".strip())
+
+        new_items = simple_openai_chat_complete(messages=chat_log())
+
+        self.item_ideas.extend([i.strip() for i in new_items.split(sep.strip()) if i])
+        shuffle(self.item_ideas)

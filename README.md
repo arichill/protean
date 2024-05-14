@@ -10,6 +10,7 @@ Will make this smoother at some point. Best way to install to:
 2. Set up virtual environment, for ex. `python -m venv venv`
 3. Install dependencies `pip install -r requirements.txt`
 4. Use `evennia --initmissing` and then `evennia migrate` to create a new db and `secret_settings.py`.
+   * Windows users will want to run `py -m evennia` beforehand to create an executable.
 5. Add your OpenAI api key to either 
    1. The environmental variable `OPENAI_API_KEY` 
    2. `\server\conf\settings.py` or `\server\conf\secret_settings.py` with `OPENAI_KEY = "<your OpenAI key>"`
