@@ -198,7 +198,7 @@ class Object(ObjectParent, DefaultObject):
     def at_get(self, getter, **kwargs):
         if self.db.get_msg:
             getter.msg(self.db.get_msg)
-            print("YOU GOT IT")
+            print("YOU GOT IT\n")
             return
 
         # if self.location.is_typeclass('typeclasses.containers.Container'):

@@ -45,7 +45,7 @@ pickup_item_prompt = \
 
 # I'm still pretty sure these *_objects lists should be in prototypes.py
 scenic_objects = [
-    "window", "car ", "building", "pile", "rubble", "tree", "vine", "house", "plant", "wall"
+    "window", "car", "building", "pile", "rubble", "tree", "vine", "house", "plant", "wall"
 ]
 
 container_objects = [
@@ -71,7 +71,7 @@ def make_prompt(additional_text, tone=True, setting=True):
 
 def generate_text(prompt, max_tokens=150, model='gpt-3.5-turbo-instruct'):
     """Returns the text of a completion prompt"""
-    print(f"Prompt:\n{prompt}")
+    print(f"Prompt:\n{prompt[-40:]}")
     log(f"Prompt:\n{prompt}")
     completion = client.completions.create(
         model=model,
