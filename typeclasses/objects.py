@@ -299,4 +299,5 @@ class Scenery(Object):
         super().at_object_creation()
         self.locks.add("get: false()")
 
+    def at_init(self):
         delay(1, self.write_get_err_msg())

@@ -65,6 +65,13 @@ class Exit(ObjectParent, DefaultExit):
             self.db.desc = new_text
             self.save()
 
+    def at_post_traverse(self, traversing_object, source_location, **kwargs):
+        assert isinstance(source_location, Room)
+        # Let's clear empty rooms of ephemera
+        if len(source_location.contents_get(content_type="character")) == 0:
+            source_location.clear_ephemera()
+        pass
+
 
 class BlockedExit(Exit):
     pass

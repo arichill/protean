@@ -108,6 +108,7 @@ class SpawnItems(Command):
 
         if target.is_typeclass('typeclasses.rooms.Room'):
             target.spawn_items()
+            self.msg("***")
         else:
             self.msg("Only rooms can spawn items, at this time")
 

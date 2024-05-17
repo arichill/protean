@@ -20,15 +20,20 @@ nlp = spacy.load('en_core_web_sm')
 
 def item_string_noun_phrase(item):
     _item = ""
-    print(f"processing '{item}")
+    first_noun = ""
+
+    print(f"processing '{item}'")
 
     for token in nlp(item):
         print(token.text, token.pos_, token.dep_)
-        if token.dep_ == "ROOT":
-            _item += token.lemma_
-            break
-        elif token.dep_ == "compound":
+        if token.dep_ == "compound":
             _item += token.text + " "
+        elif token.pos_ == "NOUN":
+            if not first_noun:
+                first_noun = _item + token.lemma_
+            if token.dep_ == "ROOT":
+                _item += token.lemma_
+                break
         else:
             _item = ""
 
@@ -36,7 +41,7 @@ def item_string_noun_phrase(item):
     if len(item.split()) < 4:
         return item
 
-    return _item
+    return _item or first_noun
 
 
 class Room(ObjectParent, DefaultRoom):
