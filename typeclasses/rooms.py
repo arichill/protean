@@ -15,7 +15,11 @@ import spacy
 from random import randint, shuffle
 
 _INFLECT = inflect.engine()
-nlp = spacy.load('en_core_web_sm')
+
+try:
+    nlp = spacy.load('en_core_web_sm')
+except IOError:
+    raise IOError("Can't find model 'en_core_web_sm'. Try installing by using `python -m spacy download en_core_web_sm`")
 
 
 def item_string_noun_phrase(item):
