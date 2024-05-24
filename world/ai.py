@@ -85,9 +85,8 @@ def generate_text(prompt, max_tokens=150, model='gpt-3.5-turbo-instruct'):
     return completion.choices[0].text
 
 
-def chat_complete(messages):
+def chat_complete(messages, model="gpt-3.5-turbo"):
     """Simple wrapper for the Chat Completion endpoint. Returns list of choices."""
-    model = "gpt-3.5-turbo"
     print(f"Sending messages to {model}::\n{messages[-1]}")
     log(f"Messages::\n{messages}")
     completion = openai.chat.completions.create(
@@ -98,8 +97,7 @@ def chat_complete(messages):
         frequency_penalty=.6
     )
     if completion:
-        if "usage" in completion:
-            print(f"Received completion. Used {completion.usage.total_tokens} tokens")
+        print(f"Received completion. Used {completion.usage.total_tokens} tokens")
         log(f"Completion:\n{completion}")
 
     return completion.choices or []
