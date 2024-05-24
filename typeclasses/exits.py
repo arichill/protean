@@ -69,8 +69,7 @@ class Exit(ObjectParent, DefaultExit):
         assert isinstance(source_location, Room)
         # Let's clear empty rooms of ephemera
         if len(source_location.contents_get(content_type="character")) == 0:
-            source_location.clear_ephemera()
-        pass
+            pass
 
 
 class BlockedExit(Exit):

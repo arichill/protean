@@ -193,5 +193,5 @@ class Room(ObjectParent, DefaultRoom):
 
         new_items = simple_openai_chat_complete(messages=chat_log())
 
-        self.item_ideas.extend([i.strip() for i in new_items.split(sep.strip()) if i])
+        self.item_ideas.extend([i.lstrip(sep.strip()).strip() for i in new_items.split(sep) if i])
         shuffle(self.item_ideas)

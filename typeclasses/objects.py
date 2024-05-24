@@ -256,24 +256,33 @@ class Object(ObjectParent, DefaultObject):
 
         messages.user(prompt)
 
-        new_text = simple_openai_chat_complete(messages=messages())
+        def chat(msgs=Messages()):
+            response = simple_openai_chat_complete(messages=msgs())
+            msgs.assistant(response)
+            return msgs
+
+        messages = chat(messages)
+        new_text = messages.last_message()
 
         if new_text:
             # self.db.desc = new_text
             self.db.desc = new_text
             self.db.used_prompt = prompt
-            self.save()
-            messages.assistant(new_text)
-        else:
-            return
+            # messages.assistant(new_text)
+        # else:
+        #     return
+        #
+        # messages.user(self.get_msg_prompt())
+        #
+        # new_text = simple_openai_chat_complete(messages=messages())  # repetitious, repetitious
+        #
+        # if new_text:
+        #     self.db.get_msg = new_text
+        messages.user(f"I can't get the {self.name}.\n")
+        messages = chat(messages)
+        self.db.get_err_msg = messages.last_message()
 
-        messages.user(self.get_msg_prompt())
-
-        new_text = simple_openai_chat_complete(messages=messages())  # repetitious, repetitious
-
-        if new_text:
-            self.db.get_msg = new_text
-            self.save() # do this at the end?
+        self.save()
 
         print(f"{self.key} described")
 
@@ -286,10 +295,15 @@ class Object(ObjectParent, DefaultObject):
         return prompt_text
 
     def write_get_err_msg(self):
-        prompt = make_prompt(f"A character tried to pick up {_INFLECT.a(self.name)} and could not\n"
-                             f"Write a short message:\n")
-        self.db.get_err_msg = generate_text(prompt)
-# TODO: consider composite objects
+        messages = Messages()
+        messages.assistant(self.db.desc)
+        messages.user(f"I can't get the {self.name}.\n")
+
+        self.db.get_err_msg = generate_text(f"I can't get the {self.name}.\n")
+
+
+# TODO: consider "composite" objects - you mean stuff like "pile of ...",
+#  an object that actually represents multiple
 
 
 class Scenery(Object):
@@ -300,4 +314,5 @@ class Scenery(Object):
         self.locks.add("get: false()")
 
     def at_init(self):
-        delay(1, self.write_get_err_msg())
+        pass
+        # delay(1, self.write_get_err_msg())
