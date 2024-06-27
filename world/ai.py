@@ -1,6 +1,7 @@
 """
 Where I'm putting functions for talking to LLMs.  OpenAI stuff basically
 """
+#  Dedicated to KDR
 
 from evennia import settings
 from evennia.utils import logger

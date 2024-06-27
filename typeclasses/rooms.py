@@ -64,6 +64,11 @@ class Room(ObjectParent, DefaultRoom):
 
     def at_init(self):
         self.item_ideas = []
+        delay(1, self.new_possible_items)
+        delay(10, self.new_possible_items)
+
+    def at_server_shutdown(self):
+        self.clear_ephemera()
 
     def describe(self):
         # addl_info = []

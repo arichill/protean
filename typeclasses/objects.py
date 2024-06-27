@@ -195,6 +195,11 @@ class Object(ObjectParent, DefaultObject):
         # self.db.desc = f"You try to look at {self.name}, but it's still more blur than anything. Maybe give it a sec"
         # self.db.article = self.db.article or "a"  # Don't need this now that I know what inflect is
 
+    def at_init(self):
+        pass
+
+        # TODO: each object should keep track of associated tasks to close them when deleted
+
     def at_get(self, getter, **kwargs):
         if self.db.get_msg:
             getter.msg(self.db.get_msg)
@@ -232,7 +237,7 @@ class Object(ObjectParent, DefaultObject):
             self.write_get_err_msg()
 
     def at_post_move(self, source_location, move_type="move", **kwargs):
-        print("POST MOVE") # This happens before at_get()
+        print("POST MOVE")  # This happens before at_get()
     #     delay(1, self.describe())
 
     def describe(self):
